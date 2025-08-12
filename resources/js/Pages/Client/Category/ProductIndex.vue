@@ -286,6 +286,7 @@
                                             <div>
                                                 <Link v-for="product_count_subcategorie in product_count_subcategories"
                                                       :href="route('client.categories.products.index', product_count_subcategorie.id)"
+                                                      :class="{ 'active-category': product_count_subcategorie.id === catalogs.id }"
                                                       class="">
                                                     {{ product_count_subcategorie.title }}
                                                     <span> {{ product_count_subcategorie.count_product }}</span><br>
@@ -295,25 +296,27 @@
 
 
                                         <div class="h3">Остаток</div>
-                                        <div class="residue ">
+                                        <div class="residue">
                                             <div class="row__block">
                                                 <label for="residue_from">от</label>
-                                                <input type="text" name="count_from" id="residue_from">
+                                                <input
+                                                    v-model="filters.integer.from.quantity"
+                                                    type="number"
+                                                    name="count_from"
+                                                    @change="updateResidueSlider"
+                                                    id="residue_from"
+                                                    min="0">
+
                                                 <label for="residue_to">до</label>
-                                                <input type="text" name="count_to" id="residue_to">
+                                                <input
+                                                    v-model="filters.integer.to.quantity"
+                                                    type="number"
+                                                    name="count_to"
+                                                    @change="updateResidueSlider"
+                                                    id="residue_to"
+                                                    min="0">
                                             </div>
-                                            <div class="row mgt10">
-                                                <div id="residue_range"
-                                                     class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
-                                                    <div class="ui-slider-range ui-corner-all ui-widget-header"
-                                                         style="left: 0%; width: 100%;"></div>
-                                                    <span tabindex="0"
-                                                          class="ui-slider-handle ui-corner-all ui-state-default"
-                                                          style="left: 0%;"></span><span tabindex="0"
-                                                                                         class="ui-slider-handle ui-corner-all ui-state-default"
-                                                                                         style="left: 100%;"></span>
-                                                </div>
-                                            </div>
+                                            <div id="residue-slider" class="mt-3 mb-3"></div>
                                         </div>
 
                                         <div class="h3">Склад</div>
@@ -325,42 +328,7 @@
                                                 </li>
                                             </ul>
 
-                                            <!--                                            <div class="h3">Цвет</div>
-                                                                                        <div class="rows__color">
-                                                                                            <input type="hidden" name="color" value="">
-
-                                                                                            <div id="colors" class="">
-                                                                                                <a class="" href="#" alt="бежевый" style="background: #f5f5dc"></a>
-                                                                                                <a class="" href="#" alt="белый" style="background: #ffffff"></a>
-                                                                                                <a class="" href="#" alt="бирюзовый" style="background: #30d5c8"></a>
-                                                                                                <a class="" href="#" alt="бордовый" style="background: #9b2d30"></a>
-                                                                                                <a class="" href="#" alt="голубой" style="background: #42aaff"></a>
-                                                                                                <a class="" href="#" alt="желтый" style="background: #ffff00"></a>
-                                                                                                <a class="" href="#" alt="зеленый" style="background: #008000"></a>
-                                                                                                <a class="" href="#" alt="коричневый" style="background: #964b00"></a>
-                                                                                                <a class="hidden" href="#" alt="красный" style="background: #ff0000"></a>
-                                                                                                <a class="hidden" href="#" alt="оранжевый" style="background: #ffa500"></a>
-                                                                                                <a class="hidden" href="#" alt="розовый" style="background: #ffc0cb"></a>
-
-                                                                                                <a class="hidden" href="#" alt="светло-зеленый" style="background: #90ee90"> </a>
-                                                                                                <a class="hidden" href="#" alt="серебряный" style="background: #c0c0c0"> </a>
-                                                                                                <a class="hidden" href="#" alt="серый" style="background: #bbbbbb"></a>
-                                                                                                <a class="hidden" href="#" alt="синий" style="background: #184a6d"> </a>
-                                                                                                <a class="hidden" href="#" alt="темно-зеленый" style="background: #013220"></a>
-                                                                                                <a class="hidden" href="#" alt="темно-коричневый" style="background: #654321"></a>
-
-
-                                                                                                <a class="hidden" href="#" alt="темно-серый" style="background: #808080"></a>
-                                                                                                <a class="hidden" href="#" alt="темно-синий" style="background: #002137"></a>
-                                                                                                <a class="hidden" href="#" alt="фиолетовый" style="background: #8b00ff"></a>
-                                                                                                <a class="hidden" href="#" alt="черный" style="background: #000000"></a>
-                                                                                            </div>
-
-                                                                                        </div>
-                                                                                        <a href="#colors" class="more">
-                                                                                            <span>Еще</span></a>-->
                                             <template v-for="(param, paramType)  in params " :key="paramType">
-
 
                                                 <div v-if="paramType === 'material' ">
                                                     <div class="h3">Материал</div>
@@ -384,6 +352,7 @@
 
                                                     </div>
                                                 </div>
+
                                                 <div v-if="paramType === 'brand' ">
                                                     <div class="h3">Бренд</div>
                                                     <div class="row">
@@ -410,7 +379,7 @@
 
                                                 <div v-if="paramType === 'drawing' ">
 
-                                                    <div class="h3">Цена, <i class="fa fa-rub "></i></div>
+                                                    <div class="h3">Цена <i class="fa fa-rub "></i></div>
 
                                                     <div class="price ">
                                                         <div class="row row__block">
@@ -445,7 +414,8 @@
 
                                             <a @click.prevent="getPosts"
                                                href="#"
-                                               class="block text-center px-3 py-2 text-gray-300 bg-indigo-800 border border-indigo-900">Фильтр</a>
+                                               class="block text-center px-3 py-2 text-gray-300 bg-indigo-800 border border-indigo-900">Фильтр
+                                            </a>
 
 
                                         </div>
@@ -486,6 +456,7 @@ export default {
 
     mounted() {
         this.initPriceSlider();
+        this.initResidueSlider(); // Добавляем инициализацию слайдера остатка
     },
 
 
@@ -516,6 +487,82 @@ export default {
         params: Object,
         total_count: Number
     },
+
+    setup(props) {
+        // Реактивные состояния
+        const showCatalogDrop = ref(false)
+        const activeCategory = ref(null)
+        const activeSubcategory = ref(null)
+        const closeTimer = ref(null)
+        const isHovering = ref(false)
+
+        // Функции для работы с каталогом
+        const openCatalogMenu = () => {
+            clearTimeout(closeTimer.value)
+            showCatalogDrop.value = true
+            isHovering.value = true
+        }
+
+        const closeCatalogMenu = () => {
+            closeTimer.value = setTimeout(() => {
+                if (!isHovering.value) {
+                    showCatalogDrop.value = false
+                    activeCategory.value = null
+                    activeSubcategory.value = null
+                }
+            }, 300)
+        }
+
+        const handleMenuMouseEnter = () => {
+            isHovering.value = true
+            clearTimeout(closeTimer.value)
+        }
+
+        const handleMenuMouseLeave = () => {
+            isHovering.value = false
+            closeCatalogMenu()
+        }
+
+        const showSubcategories = (categoryId) => {
+            activeCategory.value = categoryId
+            activeSubcategory.value = null
+        }
+
+        const showSubSubcategories = (subcategoryId) => {
+            activeSubcategory.value = subcategoryId
+        }
+
+        const getSubSubcategories = (subcategoryId) => {
+            if (!activeCategory.value) return []
+
+            const category = props.categories.find(c => c.id === activeCategory.value)
+            if (!category || !category.children) return []
+
+            const subcategory = category.children.find(sc => sc.id === subcategoryId)
+            return subcategory?.children || []
+        }
+
+        const cancelClose = () => {
+            clearTimeout(closeTimer.value)
+        }
+
+        return {
+            showCatalogDrop,
+            activeCategory,
+            activeSubcategory,
+            openCatalogMenu,
+            handleMenuMouseEnter,
+            handleMenuMouseLeave,
+            showSubcategories,
+            showSubSubcategories,
+            getSubSubcategories,
+            cancelClose,
+            props
+        }
+    },
+
+
+
 
     data() {
 
@@ -621,9 +668,48 @@ export default {
                 ]);
             }
         },
+
+        initResidueSlider() {
+            const slider = document.getElementById('residue-slider');
+            const paramType = 'quantity';
+
+            noUiSlider.create(slider, {
+                start: [
+                    this.filters.integer.from[paramType] || 0,
+                    this.filters.integer.to[paramType] || 100
+                ],
+                connect: true,
+                range: {
+                    'min': 0,
+                    'max': 100
+                },
+                step: 1
+            });
+
+            slider.noUiSlider.on('update', (values) => {
+                this.filters.integer.from[paramType] = Math.round(values[0]);
+                this.filters.integer.to[paramType] = Math.round(values[1]);
+            });
+        },
+
+        updateResidueSlider() {
+            const slider = document.getElementById('residue-slider');
+            const paramType = 'quantity';
+
+            if (slider && slider.noUiSlider) {
+                slider.noUiSlider.set([
+                    this.filters.integer.from[paramType] || 0,
+                    this.filters.integer.to[paramType] || 100
+                ]);
+            }
+        },
+
+
+
         mounted() {
             this.$nextTick(() => {
                 this.initPriceSlider();
+                this.initResidueSlider(); // Инициализируем слайдер остатка
             });
         }
 
@@ -979,6 +1065,38 @@ input[type=checkbox] + label {
     background-color: red!important;
     color: #0a0a0a;
     font-weight: bold;
+}
+
+#catalog .active-category {
+    font-weight: bold;
+    color: #ee2a27; /* или любой другой цвет для выделения */
+}
+
+#catalog .active-category span {
+    font-weight: bold;
+    color: #ee2a27;
+}
+
+
+#residue-slider {
+    margin: 15px 0;
+    height: 4px;
+}
+
+#residue-slider .noUi-connect {
+    background: #ee2a27;
+}
+
+#residue-slider .noUi-handle {
+    width: 12px!important;
+    height: 12px!important;
+    right: -6px!important;
+    top: -5px!important;
+    border-radius: 50%!important;
+    background: #ee2a27!important;
+    border: none!important;
+    box-shadow: none!important;
+    cursor: pointer!important;
 }
 
 </style>

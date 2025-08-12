@@ -20,9 +20,6 @@ class CategoryController extends Controller
 {
     public function productIndex(Category $catalogs, ProductIndexRequest $request)
     {
-
-
-
         // 1. Получаем базовые данные (категории, хлебные крошки)
         $breadcrumbs = array_reverse(CategoryService::getCategoryParents($catalogs)) ?: $catalogs;
         $categoryChildren = CategoryService::getCategoryChildren2($catalogs);
@@ -36,26 +33,19 @@ class CategoryController extends Controller
 
         // 3. Получаем ВСЕ параметры категории один раз
         $allProductIdsForParams = Product::whereIn('tovar_id', $allTovarIds)->pluck('id');
-
         $params_group = ParamService::paramProduct($allProductIdsForParams);
-        //$params_group['quantity']['количество'] = 1;
 
 
-        $productQuery = Product::select([
-            'suppliers_tovars.id', 'suppliers_tovars.sid', 'suppliers_tovars.tovar_id',
-            'suppliers_tovars.title_original', 'suppliers_tovars.id_parent', 'suppliers_tovars.title', 'suppliers_tovars.url', 'suppliers_tovars.price', 'suppliers_tovars.photo', 'suppliers_tovars.content', 'suppliers_tovars.article', 'suppliers_tovars.total'
-        ])
-            ->leftJoin('suppliers', 'suppliers.id', '=', 'suppliers_tovars.sid')// Добавляем джойн с таблицей suppliers
-            ->addSelect('suppliers.sklad') // Добавляем поле sklad из suppliers
-            ->whereIn('suppliers_tovars.tovar_id', $allTovarIds);
+
+        // 4. Запрос для пагинации товаров (только ID для текущей страницы)
+        $productQuery = Product::select(['id', 'sid', 'tovar_id', 'title_original', 'id_parent', 'title', 'url', 'price', 'photo'])
+            ->whereIn('tovar_id', $allTovarIds);
 
 
-        $groupedProducts2 =  CategoryService::groupProductsByIdWithTitles($productQuery->get());
 
 
         // Применение фильтров
         if ($request->has('filters')) {
-
             $filters = $request->input('filters');
             $data = $request->validated();
 
@@ -66,17 +56,6 @@ class CategoryController extends Controller
             if (isset($filters['integer']['to']['drawing'])) {
                 $productQuery->where('price', '<=', $filters['integer']['to']['drawing']);
             }
-
-
-            if (isset($filters['integer']['from']['quantity'])) {
-                $productQuery->where('suppliers_tovars.total', '>=', $filters['integer']['from']['quantity']);
-            }
-
-            if (isset($filters['integer']['to']['quantity'])) {
-                $productQuery->where('suppliers_tovars.total', '<=', $filters['integer']['to']['quantity']);
-            }
-
-
 
             if(isset($data['filters']['checkbox']['brand'])) {
                 $productQuery->whereHas('suppliers_tovars_paramp', function($query) use ($filters) {
@@ -97,17 +76,13 @@ class CategoryController extends Controller
             }
         }
 
-
         $groupedProducts =  CategoryService::groupProductsByIdWithTitles($productQuery->get());
-
-        debug($groupedProducts);
-       //dd($groupedProducts);
 
 
 
 
         // Ручная пагинация
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 20);
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $groupedProducts->forPage($currentPage, $perPage);
 

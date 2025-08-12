@@ -51,6 +51,7 @@ class ParamService
     //получаем параметры товаров, по категории, сортируем по параметрам и убираем дубли.
     public static function paramProduct($uniqueProductIds)
     {
+
         //получаем параметры по товарам
         $params = DB::table('suppliers_tovars_param')
             ->join('global_original_param_change', 'suppliers_tovars_param.param_id', '=', 'global_original_param_change.param_id')
@@ -60,7 +61,7 @@ class ParamService
                 'suppliers_tovars_param.type', // Добавляем поле type
                 'global_original_param_change.change'
             )
-            ->distinct() // устранение дубликатов
+            //->distinct() // устранение дубликатов
             ->get()
             ->values() //сбрасывает ключи коллекции
             ->map(function ($item, $index) { //преобразует каждую запись
@@ -71,6 +72,7 @@ class ParamService
                     'change' => $item->change
                 ];
             });
+
 
 
         return $params

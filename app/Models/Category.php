@@ -16,29 +16,29 @@ class Category extends Model
     protected $table = 'catalogs';
 
 
-    public function products($catalogs): BelongsToMany
+    public function products(): BelongsToMany
     {
         // Создаем базовое отношение
         $relation = $this->belongsToMany(
-            Product::class,
-            'suppliers_tovars_catalogs',
-            'catalog_id',
-            'tovar_id',
-            'id',
-            'tovar_id'
+            Product::class,              // 1. Связанная модель
+            'suppliers_tovars_catalogs',  // 2. Имя промежуточной таблицы
+            'catalog_id',         // 3. Ключ текущей модели в промежуточной таблице
+            'tovar_id',           // 4. Ключ связанной модели в промежуточной таблице
+            'id',                     // 5. Первичный ключ текущей модели (опционально)
+            'tovar_id'                // 6. Первичный ключ связанной модели (опционально)
         );
 
-        if ($this->id_parent === 0) {
+       /* if ($this->id_parent === 0) {
             $childCategoryIds = $this->getAllDescendantIds();
             $childCategoryIds[] = $this->id;
-        }
+        }*/
 
         return $relation;
     }
 
 
     // Метод для получения всех ID потомков
-    protected function getAllDescendantIds(): array
+    public function getAllDescendantIds(): array
     {
         $ids = [];
         $children = Category::where('id_parent', $this->id)->get();
@@ -50,4 +50,5 @@ class Category extends Model
 
         return $ids;
     }
+
 }
