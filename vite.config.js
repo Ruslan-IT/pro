@@ -4,10 +4,10 @@ import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
     server: {
-        host: '14mvgifts.local', // Указываем ваш домен
+        host: 'web-ruslan.ru', // Указываем ваш домен
         cors: true, // Включаем CORS
         hmr: {
-            host: '14mvgifts.local' // Для Hot Module Replacement
+            host: 'web-ruslan.ru' // Для Hot Module Replacement
         }
     },
     plugins: [
