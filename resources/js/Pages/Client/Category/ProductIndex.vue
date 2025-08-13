@@ -1,8 +1,8 @@
 <style>
 @import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
 @import url('https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css');
-@import url('http://14mvgifts.local/css/catalog.css');
-@import url('http://14mvgifts.local/css/style.css');
+@import url('https://web-ruslan.ru/css/catalog.css');
+@import url('https://web-ruslan.ru/css/style.css');
 </style>
 
 <template>
@@ -33,7 +33,7 @@
 
                                     <div class="header__top__cart">
                                         <div class="header__top__img">
-                                            <img src="http://14mvgifts.local/img/cart.png" alt="">
+                                            <img src="/img/cart.png" alt="">
                                         </div>
                                         <div class="header__top__info">
                                             <p class="min__order"> Минимальный заказ</p>
@@ -55,7 +55,7 @@
                 <div class="row header__search">
 
                     <div class="col-xl-2">
-                        <img src="http://14mvgifts.local/img/logo.png" alt="logo">
+                        <img src="https://web-ruslan.ru/img/logo.png" alt="logo">
                     </div>
                     <div class="col-xl-8 ">
 
@@ -70,7 +70,7 @@
                                    placeholder="Поиск товаров по названию или артикулу">
                             <div class="input-group-append">
                                 <button class="btn btn-secondary" type="button">
-                                    <img src="http://14mvgifts.local/img/ser.png" alt="search">
+                                    <img src="https://web-ruslan.ru/img/ser.png" alt="search">
                                 </button>
                             </div>
                         </div>

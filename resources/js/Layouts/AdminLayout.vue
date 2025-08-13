@@ -1,5 +1,5 @@
 <style>
-@import url('http://14mvgifts.local/plugins/fontawesome-free/css/all.min.css');
+@import url('https://web-ruslan.ru/plugins/fontawesome-free/css/all.min.css');
 </style>
 
 <template>
