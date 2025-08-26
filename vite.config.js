@@ -4,17 +4,16 @@ import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
     server: {
-        host: 'web-ruslan.ru', // Указываем ваш домен
+        host: '14mvgifts.local', // Указываем ваш домен
         cors: true, // Включаем CORS
         hmr: {
-            host: 'web-ruslan.ru' // Для Hot Module Replacement
+            host: '14mvgifts.local' // Для Hot Module Replacement
         }
     },
     plugins: [
-        laravel({
-            input: 'resources/js/app.js',
-            refresh: true,
-        }),
+        laravel([
+            'resources/js/app.js',
+        ]),
         vue({
             template: {
                 transformAssetUrls: {

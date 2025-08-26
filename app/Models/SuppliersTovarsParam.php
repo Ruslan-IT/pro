@@ -27,4 +27,9 @@ class SuppliersTovarsParam extends Model
     {
         return $this->belongsTo(GlobalOriginalParamChange::class, 'param_id', 'param_id');
     }
+
+    public function originalParam()
+    {
+        return $this->belongsTo(GlobalOriginalParam::class, 'param_id', 'id');
+    }
 }

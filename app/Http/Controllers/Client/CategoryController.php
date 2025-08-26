@@ -21,12 +21,12 @@ class CategoryController extends Controller
     public function productIndex(Category $catalogs, ProductIndexRequest $request)
     {
 
-
-
         // 1. Получаем базовые данные (категории, хлебные крошки)
         $breadcrumbs = array_reverse(CategoryService::getCategoryParents($catalogs)) ?: $catalogs;
         $categoryChildren = CategoryService::getCategoryChildren2($catalogs);
         $categoryChildrenAll = $categoryChildren['childrenAll'][0]->values()->toArray();
+
+
 
         // 2. Получаем ID всех товаров в категории (для параметров)
         $allTovarIds = SuppliersTovarsCatalogs::whereIn('catalog_id', array_column($categoryChildren['children'], 'id'))
@@ -37,20 +37,27 @@ class CategoryController extends Controller
         // 3. Получаем ВСЕ параметры категории один раз
         $allProductIdsForParams = Product::whereIn('tovar_id', $allTovarIds)->pluck('id');
 
+
         $params_group = ParamService::paramProduct($allProductIdsForParams);
-        //$params_group['quantity']['количество'] = 1;
 
 
+        // Получаем все товары с их параметрами
         $productQuery = Product::select([
             'suppliers_tovars.id', 'suppliers_tovars.sid', 'suppliers_tovars.tovar_id',
-            'suppliers_tovars.title_original', 'suppliers_tovars.id_parent', 'suppliers_tovars.title', 'suppliers_tovars.url', 'suppliers_tovars.price', 'suppliers_tovars.photo', 'suppliers_tovars.content', 'suppliers_tovars.article', 'suppliers_tovars.total'
+            'suppliers_tovars.title_original', 'suppliers_tovars.id_parent', 'suppliers_tovars.title', 'suppliers_tovars.url',
+            'suppliers_tovars.url', 'suppliers_tovars.price', 'suppliers_tovars.photo', 'suppliers_tovars.content',
+            'suppliers_tovars.article', 'suppliers_tovars.total'
         ])
-            ->leftJoin('suppliers', 'suppliers.id', '=', 'suppliers_tovars.sid')// Добавляем джойн с таблицей suppliers
-            ->addSelect('suppliers.sklad') // Добавляем поле sklad из suppliers
-            ->whereIn('suppliers_tovars.tovar_id', $allTovarIds);
+            ->leftJoin('suppliers', 'suppliers.id', '=', 'suppliers_tovars.sid')
+            ->addSelect('suppliers.sklad')
+            ->whereIn('suppliers_tovars.tovar_id', $allTovarIds)
+            ->with(['param' => function($query) {
+                $query->select('tovar_id', 'param_id', 'type') //suppliers_tovars_param
+                    ->with(['originalParam' => function($q) {
+                        $q->select('id', 'original', 'type'); //global_original_param
+                    }]);
+            }]);
 
-
-        $groupedProducts2 =  CategoryService::groupProductsByIdWithTitles($productQuery->get());
 
 
         // Применение фильтров
@@ -98,27 +105,25 @@ class CategoryController extends Controller
         }
 
 
-        $groupedProducts =  CategoryService::groupProductsByIdWithTitles($productQuery->get());
-
-        debug($groupedProducts);
-       //dd($groupedProducts);
+        $groupedProducts = CategoryService::getProductParamVariants($productQuery->get());
 
 
+        $groupedProductsCollection = collect(array_values($groupedProducts));
 
-
-        // Ручная пагинация
+        //  пагинацию:
         $perPage = $request->input('per_page', 10);
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentItems = $groupedProducts->forPage($currentPage, $perPage);
+        $currentItems = $groupedProductsCollection->forPage($currentPage, $perPage);
 
-        // Создаем пагинатор вручную
         $products = new LengthAwarePaginator(
             $currentItems,
-            $groupedProducts->count(),
+            $groupedProductsCollection->count(),
             $perPage,
             $currentPage,
             ['path' => LengthAwarePaginator::resolveCurrentPath()]
         );
+
+
 
         // 6. Формируем ответ
         $actualProductsFact = ProductResource::collection($products)->resolve();
@@ -136,6 +141,9 @@ class CategoryController extends Controller
                 'params' => $params_group, // Все параметры категории
             ]);
         }
+
+
+
 
         return inertia('Client/Category/ProductIndex', [
             'products' => $actualProductsFact,

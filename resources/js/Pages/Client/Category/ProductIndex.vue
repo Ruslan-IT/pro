@@ -1,9 +1,12 @@
-<style>
+<style  >
 @import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
 @import url('https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css');
-@import url('https://web-ruslan.ru/css/catalog.css');
-@import url('https://web-ruslan.ru/css/style.css');
-</style>
+
+
+@import '/public/css/catalog.css';
+@import '/public/css/style.css';
+
+</style  >
 
 <template>
     <div class="wrapper">
@@ -66,13 +69,52 @@
                         </button>
 
                         <div class="input-group">
-                            <input type="text" class="form-control"
-                                   placeholder="Поиск товаров по названию или артикулу">
+                            <input type="text"
+                                   class="form-control"
+                                   placeholder="Поиск товаров по названию или артикулу"
+                                   v-model="searchQuery"
+                                   @input="handleSearchInput"
+                                   @focus="showSearchResults = true"
+                                   @blur="hideSearchResults">
+
                             <div class="input-group-append">
+
                                 <button class="btn btn-secondary" type="button">
                                     <img src="https://web-ruslan.ru/img/ser.png" alt="search">
                                 </button>
+
                             </div>
+
+                            <!-- Результаты поиска -->
+                            <div
+                                class="search-results-dropdown"
+                                v-show="showSearchResults && searchResults.length > 0"
+                                @mouseenter="keepResultsVisible"
+                                @mouseleave="hideSearchResults">
+
+                                <div
+                                    class="search-result-item"
+                                    v-for="result in searchResults"
+                                    :key="result.id">
+
+                                    <Link :href="route('client.products.show', result.url)">
+                                        {{ result.title }} ({{ result.article }})
+                                    </Link>
+                                </div>
+                            </div>
+
+                            <div class="search-results-dropdown" v-show="showSearchResults">
+                                <div v-if="searchLoading" class="search-loading">
+                                    Загрузка...
+                                </div>
+                                <template v-else>
+
+                                    <div v-if="searchResults.length === 0 && searchQuery" class="no-results">
+                                        Ничего не найдено
+                                    </div>
+                                </template>
+                            </div>
+
                         </div>
                     </div>
                     <div class="col-xl-2 phone__mob__none">
@@ -105,6 +147,61 @@
 
                                             <a class="nav-link catalog__mar" href="#">КАТАЛОГ</a>
                                             <span></span>
+
+                                            <section v-if="showCatalogDrop" class="catalog_drop"
+                                                     @mouseenter="handleMenuMouseEnter"
+                                                     @mouseleave="handleMenuMouseLeave">
+                                                <div class="wrap_c">
+                                                    <div class="list">
+
+                                                        <a :href="`/categories/${category.url}/products`" class="item"
+                                                           v-for="category in categories" :key="category.id"
+                                                           @mouseenter="showSubcategories(category.id)">
+
+
+                                                        <div class="table">
+                                                            <div class="margin">
+                                                                <p style="text-transform: uppercase;">
+
+                                                                    {{category.title }}
+
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+
+                                                            <!-- Подкатегории -->
+                                                            <div class="subcategories"
+                                                                 v-if="activeCategory === category.id && category.children?.length"
+                                                                 @mouseenter="cancelClose">
+                                                                <div class="subcategory-column">
+                                                                    <a v-for="subcategory in category.children"
+                                                                       :key="subcategory.id"
+                                                                       :href="`/categories/${subcategory.url}/products`"
+                                                                       @mouseenter="showSubSubcategories(subcategory.id)">
+                                                                        {{ subcategory.title }}
+                                                                    </a>
+                                                                </div>
+
+                                                                <!-- Под-подкатегории -->
+                                                                <div class="sub-subcategories"
+                                                                     v-if="activeSubcategory"
+                                                                     @mouseenter="cancelClose">
+                                                                    <div
+                                                                        v-for="subsubcategory in getSubSubcategories(activeSubcategory)"
+                                                                        :key="subsubcategory.id">
+                                                                        <a :href="`/catalog/${subsubcategory.url}/`">
+                                                                            {{ subsubcategory.title }}
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </section>
+
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="#">ПОРТФОЛИО</a>
@@ -156,57 +253,7 @@
                                             data-bs-target="#navbarNav" aria-controls="navbarNav"
                                             aria-label="Close"></button>
                                 </div>
-                                <section v-if="showCatalogDrop" class="catalog_drop"
-                                         @mouseenter="handleMenuMouseEnter"
-                                         @mouseleave="handleMenuMouseLeave">
-                                    <div class="wrap_c">
-                                        <div class="list">
-                                            <!--                                            :href="`/catalog/${category.url}/`"-->
-                                            <a :href="`/catalog/${category.url}/`" class="item"
-                                               v-for="category in categories" :key="category.id"
-                                               @mouseenter="showSubcategories(category.id)">
 
-                                                    <span>
-                                                        <div class="table">
-                                                            <div class="margin">
-                                                                <p style="text-transform: uppercase;">{{
-                                                                        category.title
-                                                                    }}</p>
-                                                            </div>
-                                                        </div>
-                                                    </span>
-
-                                                <!-- Подкатегории -->
-                                                <div class="subcategories"
-                                                     v-if="activeCategory === category.id && category.children?.length"
-                                                     @mouseenter="cancelClose">
-                                                    <div class="subcategory-column">
-                                                        <a v-for="subcategory in category.children"
-                                                           :key="subcategory.id"
-                                                           :href="`/categories/${subcategory.id}/products`"
-                                                           @mouseenter="showSubSubcategories(subcategory.id)">
-                                                            {{ subcategory.title }}
-                                                        </a>
-                                                    </div>
-
-                                                    <!-- Под-подкатегории -->
-                                                    <div class="sub-subcategories"
-                                                         v-if="activeSubcategory"
-                                                         @mouseenter="cancelClose">
-                                                        <div
-                                                            v-for="subsubcategory in getSubSubcategories(activeSubcategory)"
-                                                            :key="subsubcategory.id">
-                                                            <a :href="`/catalog/${subsubcategory.url}/`">
-                                                                {{ subsubcategory.title }}
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </a>
-                                        </div>
-                                    </div>
-                                </section>
                             </div>
 
                         </nav>
@@ -285,7 +332,7 @@
                                         <div id="catalog" v-if="product_count_subcategories.length > 0">
                                             <div>
                                                 <Link v-for="product_count_subcategorie in product_count_subcategories"
-                                                      :href="route('client.categories.products.index', product_count_subcategorie.id)"
+                                                      :href="route('client.categories.products.index', product_count_subcategorie.url)"
                                                       :class="{ 'active-category': product_count_subcategorie.id === catalogs.id }"
                                                       class="">
                                                     {{ product_count_subcategorie.title }}
@@ -428,6 +475,8 @@
                             <ProductItem v-for="product in productsData" :product="product"></ProductItem>
 
                         </div>
+
+
                     </div>
                 </div>
             </section>
@@ -437,424 +486,278 @@
     </div>
 </template>
 
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import MainLayout from '@/Layouts/MainLayout.vue'
+import ProductItem from "@/Components/Client/Product/Productitem.vue"
+import { Link } from "@inertiajs/vue3"
+import noUiSlider from 'nouislider'
+import 'nouislider/dist/nouislider.css'
 
-<script>
-import {ref} from 'vue'
+const props = defineProps({
+    catalogs: Object,         // Основная категория каталога
+    products: Array,          // Список товаров
+    breadcrumbs: Array,       // Хлебные крошки
+    subcategories: Array,     // Подкатегории
+    product_count_subcategories: Array, // Подкатегории с количеством товаров
+    categories: Array,        // Все категории для меню
+    params: Object,           // Параметры фильтрации
+    total_count: Number       // Общее количество товаров
+})
 
-import MainLayout from '@/Layouts/MainLayout.vue';
-import ProductItem from "@/Components/Client/Product/Productitem.vue";
-import {Link} from "@inertiajs/vue3";
-
-import noUiSlider from 'nouislider';
-import 'nouislider/dist/nouislider.css';
-
-
-export default {
-
-    name: 'ProductIndex',
-    layout: MainLayout,
-
-    mounted() {
-        this.initPriceSlider();
-        this.initResidueSlider(); // Добавляем инициализацию слайдера остатка
-    },
-
-
-    computed: {
-        productWord() {
-            const count = this.totalCount % 100;
-            if (count >= 11 && count <= 19) return 'товаров';
-
-            const lastDigit = count % 10;
-            if (lastDigit === 1) return 'товар';
-            if (lastDigit >= 2 && lastDigit <= 4) return 'товара';
-            return 'товаров';
-        }
-    },
-
-    components: {
-        ProductItem,
-        Link,
-    },
-
-    props: {
-        catalogs: Object,
-        products: Array,
-        breadcrumbs: Array,
-        subcategories: Array,
-        product_count_subcategories: Array,
-        categories: Array, //  дерево категорий
-        params: Object,
-        total_count: Number
-    },
-
-    setup(props) {
-        // Реактивные состояния
-        const showCatalogDrop = ref(false)
-        const activeCategory = ref(null)
-        const activeSubcategory = ref(null)
-        const closeTimer = ref(null)
-        const isHovering = ref(false)
-
-        // Функции для работы с каталогом
-        const openCatalogMenu = () => {
-            clearTimeout(closeTimer.value)
-            showCatalogDrop.value = true
-            isHovering.value = true
-        }
-
-        const closeCatalogMenu = () => {
-            closeTimer.value = setTimeout(() => {
-                if (!isHovering.value) {
-                    showCatalogDrop.value = false
-                    activeCategory.value = null
-                    activeSubcategory.value = null
-                }
-            }, 300)
-        }
-
-        const handleMenuMouseEnter = () => {
-            isHovering.value = true
-            clearTimeout(closeTimer.value)
-        }
-
-        const handleMenuMouseLeave = () => {
-            isHovering.value = false
-            closeCatalogMenu()
-        }
-
-        const showSubcategories = (categoryId) => {
-            activeCategory.value = categoryId
-            activeSubcategory.value = null
-        }
-
-        const showSubSubcategories = (subcategoryId) => {
-            activeSubcategory.value = subcategoryId
-        }
-
-        const getSubSubcategories = (subcategoryId) => {
-            if (!activeCategory.value) return []
-
-            const category = props.categories.find(c => c.id === activeCategory.value)
-            if (!category || !category.children) return []
-
-            const subcategory = category.children.find(sc => sc.id === subcategoryId)
-            return subcategory?.children || []
-        }
-
-        const cancelClose = () => {
-            clearTimeout(closeTimer.value)
-        }
-
-        return {
-            showCatalogDrop,
-            activeCategory,
-            activeSubcategory,
-            openCatalogMenu,
-            handleMenuMouseEnter,
-            handleMenuMouseLeave,
-            showSubcategories,
-            showSubSubcategories,
-            getSubSubcategories,
-            cancelClose,
-            props
-        }
-    },
+// Реактивные состояния
+const showCatalogDrop = ref(false)       // Показывать/скрывать выпадающее меню каталога
+const activeCategory = ref(null)         // ID активной категории
+const activeSubcategory = ref(null)      // ID активной подкатегории
+const closeTimer = ref(null)             // Таймер для закрытия меню
+const isHovering = ref(false)            // Флаг наведения на меню
+const mounted = ref(false)               // Флаг монтирования компонента
+const productsData = ref(props.products) // Реактивный список товаров
+const totalCount = ref(props.total_count) // Реактивное общее количество товаров
 
 
+//поиск
+const searchQuery = ref('')
+const searchResults = ref([])
+const showSearchResults = ref(false)
+const searchDebounce = ref(null)
+const searchLoading = ref(false)
 
+const handleSearchInput = () => {
+    // Очищаем предыдущий таймер
+    clearTimeout(searchDebounce.value)
 
-    data() {
-
-        return {
-
-            productsData: this.products,
-            totalCount: this.total_count, // Или начальное значение
-            filters: {
-                integer: {
-                    from: {},
-                    to: {},
-                },
-                select: {},
-                checkbox: {},
-
-            },
-
-
-        }
-    },
-
-    methods: {
-        setFilter(item, value) {
-            if (this.filters.checkbox[item.type]) {
-                this.toggleItem(this.filters.checkbox[item.type], value)
-                return;
-            }
-
-            this.filters.checkbox[item.type] = [];
-            this.filters.checkbox[item.type].push(value);
-        },
-
-        toggleItem(arr, value) {
-            let index = arr.indexOf(value);
-            index === -1 ? arr.push(value) : arr.splice(index, 1);
-        },
-
-        //поиск по фильтру
-        getPosts() {
-            //this.clean(this.filters.integer.from);
-            axios.get(route('client.categories.products.index', this.catalogs.id), {
-                params: {
-                    filters: this.filters
-                }
-            })
-                .then(res => {
-                    console.log('Полный ответ:', res); // Для отладки
-
-                    // Проверяем разные форматы ответа
-                    if (res.data.data && res.data.meta) {
-
-                        this.productsData = res.data.data;
-                        this.totalCount = res.data.meta.total_count;
-                    } else {
-                        console.error('Неизвестный формат ответа:', res.data);
-                    }
-
-                })
-
-
-        },
-
-        clean(obj) {
-            Object.keys(obj).forEach(key => {
-
-            })
-
-        },
-
-
-        initPriceSlider() {
-            const slider = document.getElementById('price-slider');
-            const paramType = 'drawing'; // или this.currentParamType если у вас несколько
-
-            noUiSlider.create(slider, {
-                start: [
-                    this.filters.integer.from[paramType] || 0,
-                    this.filters.integer.to[paramType] || 10000
-                ],
-                connect: true,
-                range: {
-                    'min': 0,
-                    'max': 10000
-                },
-                step: 100
-            });
-
-            slider.noUiSlider.on('update', (values) => {
-                this.filters.integer.from[paramType] = Math.round(values[0]);
-                this.filters.integer.to[paramType] = Math.round(values[1]);
-            });
-        },
-
-        // Добавим метод для обновления ползунка при изменении полей ввода
-        updateSlider() {
-            const slider = document.getElementById('price-slider');
-            const paramType = 'drawing'; // или this.currentParamType
-
-            if (slider && slider.noUiSlider) {
-                slider.noUiSlider.set([
-                    this.filters.integer.from[paramType] || 0,
-                    this.filters.integer.to[paramType] || 10000
-                ]);
-            }
-        },
-
-        initResidueSlider() {
-            const slider = document.getElementById('residue-slider');
-            const paramType = 'quantity';
-
-            noUiSlider.create(slider, {
-                start: [
-                    this.filters.integer.from[paramType] || 0,
-                    this.filters.integer.to[paramType] || 100
-                ],
-                connect: true,
-                range: {
-                    'min': 0,
-                    'max': 100
-                },
-                step: 1
-            });
-
-            slider.noUiSlider.on('update', (values) => {
-                this.filters.integer.from[paramType] = Math.round(values[0]);
-                this.filters.integer.to[paramType] = Math.round(values[1]);
-            });
-        },
-
-        updateResidueSlider() {
-            const slider = document.getElementById('residue-slider');
-            const paramType = 'quantity';
-
-            if (slider && slider.noUiSlider) {
-                slider.noUiSlider.set([
-                    this.filters.integer.from[paramType] || 0,
-                    this.filters.integer.to[paramType] || 100
-                ]);
-            }
-        },
-
-
-
-        mounted() {
-            this.$nextTick(() => {
-                this.initPriceSlider();
-                this.initResidueSlider(); // Инициализируем слайдер остатка
-            });
-        }
-
-
+    // Если запрос пустой, очищаем результаты
+    if (!searchQuery.value.trim()) {
+        searchResults.value = []
+        return
     }
 
+    // Устанавливаем новый таймер для задержки запроса
+    searchDebounce.value = setTimeout(() => {
+        searchProducts()
+    }, 300) // Задержка 300мс
 }
 
 
-// Создаем реактивную ссылку для таймера закрытия меню
-const closeTimer = ref(null)
+const searchProducts = async () => {
+    if (!searchQuery.value.trim()) {
+        searchResults.value = []
+        return
+    }
 
-// Функция открытия меню каталога
+    searchLoading.value = true
+    try {
+        const response = await axios.get(route('client.products.search'), {
+            params: {
+                query: searchQuery.value
+            }
+        })
+        searchResults.value = response.data
+    } catch (error) {
+        console.error('Search error:', error)
+        searchResults.value = []
+    } finally {
+        searchLoading.value = false
+    }
+}
+
+const hideSearchResults = () => {
+    // Небольшая задержка, чтобы можно было кликнуть по результату
+    setTimeout(() => {
+        showSearchResults.value = false
+    }, 200)
+}
+
+const keepResultsVisible = () => {
+    showSearchResults.value = true
+}
+
+
+/*******************************************/
+
+const filters = ref({
+    integer: {
+        from: {},
+        to: {},
+    },
+    select: {},
+    checkbox: {},
+})
+
+// Функции для работы с каталогом
 const openCatalogMenu = () => {
-    // Сбрасываем таймер закрытия (если он был запущен)
-    clearTimeout(closeTimer.value)
-    // Устанавливаем флаг показа меню в true
-    showCatalogDrop.value = true
+    clearTimeout(closeTimer.value)      // Сброс таймера закрытия
+    showCatalogDrop.value = true        // Показать меню
+    isHovering.value = true            // Установить флаг наведения
 }
 
-// Функция закрытия меню каталога
 const closeCatalogMenu = () => {
-    // Устанавливаем таймер, который закроет меню через 3 секунды
-    closeTimer.value = setTimeout(() => {
-        // Скрываем меню
-        showCatalogDrop.value = false
-        // Сбрасываем активную категорию
-        activeCategory.value = null
-        // Сбрасываем активную подкатегорию
-        activeSubcategory.value = null
-    }, 3000) // Задержка 3 секунды перед закрытием
+    closeTimer.value = setTimeout(() => { // Запустить таймер закрытия
+        if (!isHovering.value) {          // Если не наведено
+            showCatalogDrop.value = false // Скрыть меню
+            activeCategory.value = null   // Сбросить активную категорию
+            activeSubcategory.value = null // Сбросить подкатегорию
+        }
+    }, 300) // Задержка 300мс
 }
 
-// Функция отмены закрытия меню
-const cancelClose = () => {
-    // Сбрасываем таймер закрытия
-    clearTimeout(closeTimer.value)
+const handleMenuMouseEnter = () => {
+    isHovering.value = true          // Установить флаг наведения
+    clearTimeout(closeTimer.value)   // Сбросить таймер закрытия
 }
 
-// Функция запуска таймера закрытия
-const startCloseTimer = () => {
-    // Вызываем функцию закрытия меню
-    closeCatalogMenu()
+const handleMenuMouseLeave = () => {
+    isHovering.value = false         // Сбросить флаг наведения
+    closeCatalogMenu()               // Запустить закрытие меню
 }
 
-// Реактивное состояние для отображения/скрытия меню каталога
-const showCatalogDrop = ref(false)
 
-// Реактивное состояние для хранения ID активной категории
-const activeCategory = ref(null)
+//Работа с подкатегориями:
 
-// Реактивное состояние для хранения ID активной подкатегории
-const activeSubcategory = ref(null)
-
-// Функция отображения подкатегорий для выбранной категории
 const showSubcategories = (categoryId) => {
-    // Устанавливаем активную категорию
-    activeCategory.value = categoryId
-    // Сбрасываем активную подкатегорию
-    activeSubcategory.value = null
+    activeCategory.value = categoryId      // Установить активную категорию
+    activeSubcategory.value = null         // Сбросить подкатегорию
 }
 
-// Функция отображения под-подкатегорий для выбранной подкатегории
 const showSubSubcategories = (subcategoryId) => {
-    // Устанавливаем активную подкатегорию
-    activeSubcategory.value = subcategoryId
+    activeSubcategory.value = subcategoryId// Установить активную подкатегорию
 }
 
-// Функция получения под-подкатегорий для выбранной подкатегории
 const getSubSubcategories = (subcategoryId) => {
-    // Ищем активную категорию в переданных props.categories
-    const category = props.categories.find(c => c.id === activeCategory.value)
-    // Если категория не найдена - возвращаем пустой массив
-    if (!category) return []
+    // Найти под-подкатегории для активной подкатегории
+    if (!activeCategory.value) return []
 
-    // Ищем подкатегорию в children активной категории
+    const category = props.categories.find(c => c.id === activeCategory.value)
+    if (!category || !category.children) return []
+
     const subcategory = category.children.find(sc => sc.id === subcategoryId)
-    // Возвращаем children подкатегории или пустой массив, если их нет
     return subcategory?.children || []
 }
 
+const cancelClose = () => {
+    clearTimeout(closeTimer.value)// Отменить закрытие меню
+}
 
-</script>
 
 
-<script setup>
 
-// Импортируем необходимые функции из Vue
-import {ref, onMounted} from 'vue'
+// Функции для фильтров
+const productWord = computed(() => {
+    // Склонение слова "товар" в зависимости от количества
+    const count = totalCount.value % 100
+    if (count >= 11 && count <= 19) return 'товаров'
 
-// Создаем реактивное состояние для отслеживания видимости выпадающего меню
-const showCatalogDrop = ref(false)
-
-// Создаем реактивное состояние для отслеживания монтирования компонента
-const mounted = ref(false)
-
-// Создаем реактивную ссылку для хранения таймера закрытия
-const closeTimer = ref(null)
-
-// Создаем реактивное состояние для отслеживания наведения курсора
-const isHovering = ref(false)
-
-// Хук жизненного цикла, срабатывает после монтирования компонента
-onMounted(() => {
-    // Устанавливаем флаг монтирования в true
-    mounted.value = true
+    const lastDigit = count % 10
+    if (lastDigit === 1) return 'товар'
+    if (lastDigit >= 2 && lastDigit <= 4) return 'товара'
+    return 'товаров'
 })
 
-// Функция открытия меню каталога
-const openCatalogMenu = () => {
-    // Очищаем предыдущий таймер закрытия (если был)
-    clearTimeout(closeTimer.value)
-    // Показываем выпадающее меню
-    showCatalogDrop.value = true
-    // Устанавливаем флаг наведения в true
-    isHovering.value = true
+//Управление фильтрами:
+
+const setFilter = (item, value) => {
+    // Установка фильтра по чекбоксу
+    if (filters.value.checkbox[item.type]) {
+        toggleItem(filters.value.checkbox[item.type], value)
+        return
+    }
+
+    filters.value.checkbox[item.type] = []
+    filters.value.checkbox[item.type].push(value)
 }
 
-// Функция закрытия меню каталога
-const closeCatalogMenu = () => {
-    // Устанавливаем новый таймер закрытия
-    closeTimer.value = setTimeout(() => {
-        // Проверяем, что курсор больше не наводится
-        if (!isHovering.value) {
-            // Скрываем выпадающее меню
-            showCatalogDrop.value = false
+const toggleItem = (arr, value) => {
+
+    // Переключение элемента фильтра
+    const index = arr.indexOf(value)
+    index === -1 ? arr.push(value) : arr.splice(index, 1)
+}
+
+
+//Загрузка отфильтрованных товаров:
+
+const getPosts = () => {
+    // AJAX-запрос для фильтрации товаров
+    axios.get(route('client.categories.products.index', props.catalogs.url), {
+        params: {
+            filters: filters.value
         }
-    }, 300) // Задержка 300 мс перед закрытием
+    })
+        .then(res => {
+            if (res.data.data && res.data.meta) {
+                productsData.value = res.data.data  // Обновить список товаров
+                totalCount.value = res.data.meta.total_count  // Обновить количество
+            }
+        })
 }
 
-// Функция обработки наведения на меню
-const handleMenuMouseEnter = () => {
-    // Устанавливаем флаг наведения в true
-    isHovering.value = true
-    // Очищаем таймер закрытия (чтобы меню не закрылось)
-    clearTimeout(closeTimer.value)
+
+
+
+
+
+
+
+
+// Инициализация слайдеров
+const initPriceSlider = () => {
+    const slider = document.getElementById('price-slider')
+    const paramType = 'drawing'
+
+    if (slider && !slider.noUiSlider) {
+        noUiSlider.create(slider, {
+            start: [
+                filters.value.integer.from[paramType] || 0,
+                filters.value.integer.to[paramType] || 10000
+            ],
+            connect: true,
+            range: {
+                'min': 0,
+                'max': 10000
+            },
+            step: 100
+        })
+        // Обновление значений фильтра при движении слайдера
+        slider.noUiSlider.on('update', (values) => {
+            filters.value.integer.from[paramType] = Math.round(values[0])
+            filters.value.integer.to[paramType] = Math.round(values[1])
+        })
+    }
 }
 
-// Функция обработки ухода курсора с меню
-const handleMenuMouseLeave = () => {
-    // Устанавливаем флаг наведения в false
-    isHovering.value = false
-    // Запускаем таймер закрытия меню
-    closeCatalogMenu()
+const initResidueSlider = () => {
+    // Аналогично слайдеру цены, но для количества товаров
+    const slider = document.getElementById('residue-slider')
+    const paramType = 'quantity'
+
+    if (slider && !slider.noUiSlider) {
+        noUiSlider.create(slider, {
+            start: [
+                filters.value.integer.from[paramType] || 0,
+                filters.value.integer.to[paramType] || 100
+            ],
+            connect: true,
+            range: {
+                'min': 0,
+                'max': 100
+            },
+            step: 1
+        })
+
+        slider.noUiSlider.on('update', (values) => {
+            filters.value.integer.from[paramType] = Math.round(values[0])
+            filters.value.integer.to[paramType] = Math.round(values[1])
+        })
+    }
 }
+
+onMounted(() => {
+    mounted.value = true      // Установить флаг монтирования
+    initPriceSlider()        // Инициализировать слайдер цены
+    initResidueSlider()      // Инициализировать слайдер количества
+})
+
 
 
 </script>
@@ -871,16 +774,11 @@ const handleMenuMouseLeave = () => {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: opacity 0.3s ease;
 }
-
-.subcategories {
-    position: absolute;
-    left: 100%;
-    top: 0;
-    background: white;
-    min-width: 250px;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
-    padding: 0;
+.catalog__desc:hover .catalog_drop,
+.catalog_drop:hover {
+    display: block;
 }
+
 
 .sub-subcategories {
     position: absolute;
@@ -889,7 +787,7 @@ const handleMenuMouseLeave = () => {
     background: white;
     min-width: 250px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
-    padding: 15px;
+    padding: 0
 }
 
 /* Для плавного появления/исчезновения */
@@ -901,6 +799,9 @@ const handleMenuMouseLeave = () => {
     opacity: 0;
     transform: translateY(10px);
 }
+
+
+/********************************************************************************************/
 
 .header .catalog_drop .list {
     display: flex !important;
@@ -916,12 +817,13 @@ const handleMenuMouseLeave = () => {
 }
 
 
+
 .header .catalog_drop .list .item {
     border-right: 0;
     width: 100%;
     display: flex;
     align-items: flex-end;
-    height: 100%;
+    height: 40px;
     justify-content: center;
     padding: 10px 10px;
 }
@@ -960,16 +862,17 @@ const handleMenuMouseLeave = () => {
 
 .subcategories {
     position: absolute;
+    top: 0;
     left: 100%;
-    top: -10px;
     background: white;
     min-width: 250px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
-    padding: 10px 0 0 0;
+    padding: 0 0 0 0;
 }
 
 .item .table {
     margin: 0;
+
 }
 
 .item:hover {
@@ -983,8 +886,9 @@ const handleMenuMouseLeave = () => {
 }
 
 .subcategory-column a {
-    padding: 10px 10px;
+    padding: 9px 10px;
     text-transform: uppercase;
+    font-size: 15px;
 }
 
 .subcategory-column a:hover {
@@ -1098,6 +1002,17 @@ input[type=checkbox] + label {
     box-shadow: none!important;
     cursor: pointer!important;
 }
+
+.collapse {
+    visibility: visible;
+}
+
+.product-main-image[data-v-8f09e388]{
+    border: 0;
+}
+
+
+
 
 </style>
 

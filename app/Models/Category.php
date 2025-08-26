@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\DB;
 class Category extends Model
 {
 
+    protected $fillable = [
+        'id_parent',
+        'title',
+        'flag',
+        'meta_title',
+        'meta_keywords',
+        'meta_description',
+        'url',
+        'step'
+    ];
+
     protected $table = 'catalogs';
 
 
@@ -28,12 +39,12 @@ class Category extends Model
             'tovar_id'                // 6. Первичный ключ связанной модели (опционально)
         );
 
-       /* if ($this->id_parent === 0) {
-            $childCategoryIds = $this->getAllDescendantIds();
-            $childCategoryIds[] = $this->id;
-        }*/
-
         return $relation;
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'url';
     }
 
 

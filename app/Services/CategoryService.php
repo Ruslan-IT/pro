@@ -40,7 +40,7 @@ class CategoryService
     public static function getCategoryChildren2(Category $category): array
     {
         // Загружаем все категории одним запросом
-        $allCategories = Category::select(['id', 'id_parent', 'title'])->get()->keyBy('id');
+        $allCategories = Category::select(['id', 'id_parent', 'title', 'url'])->get()->keyBy('id');
         return self::getChildrenRecursive($category, $allCategories);
     }
 
@@ -173,6 +173,9 @@ class CategoryService
 
     }
 
+
+
+
     /**
      * Группирует продукты по ключу, извлеченному из названия, и формирует варианты по цветам
      *
@@ -181,11 +184,23 @@ class CategoryService
      */
     public static function groupProductsByIdWithTitles($products)
     {
+
         return $products->groupBy(function ($product) {
-            return self::generateGroupKey($product->title);
+
+            $title_group = self::generateGroupKey($product->title);
+
+            return $title_group; // название группы
         })
             ->map(function ($productGroup) {
+                //dd($productGroup);
+
+                /*foreach ($productGroup as $product) {
+                    echo $product->title . '<br>';
+                }
+                exit();*/
+
                 $mainProduct = $productGroup->first();
+
                 $colors = [];
                 $variants = [];
 
@@ -231,6 +246,7 @@ class CategoryService
      */
     public static function generateGroupKey($title)
     {
+
         // Нормализация: удаление лишних пробелов
         $title = trim($title);
 
@@ -287,7 +303,7 @@ class CategoryService
             'голубой', 'фиолетовый', 'оранжевый', 'серый', 'серый меланж', 'серебристый',
             'золотой', 'коричневый', 'розовый', 'бирюзовый', 'бежевый'];
 
-        return in_array(mb_strtolower(trim($word)), $colors);
+        return in_array(trim($word), $colors);
     }
 
 
@@ -385,10 +401,86 @@ class CategoryService
         return null;
     }
 
+    public static function getProductParamVariants($get)
+    {
+        $groupedProducts = [];
+
+        foreach ($get as $product) {
 
 
 
+            $groupKey = CategoryService::generateGroupKey($product->title);
 
+            if (!isset($groupedProducts[$groupKey])) {
+                $groupedProducts[$groupKey] = [
+                    'id' => $product->id,
+                    'tovar_id' => $product->tovar_id,
+                    'title' => $groupKey,
+                    'sid' => $product->sid,
+                    'url' => $product->url,
+                    'url_img' => $product->photo ? 'https://mvgifts.ru/img/tovars/'.$product->sid.'/'.$product->tovar_id.'/'.$product->tovar_id.'.jpg' : null,
+                    'height' => '200px',
+                    'width' => '200px',
+                    'article' => $product->article,
+                    'total' => $product->total,
+                    'id_parent' => $product->id_parent,
+                    'price' => $product->price,
+                    'content' => $product->content,
+                    'base_title' => null,
+                    'variants' => [],
+                    'params' => [
+                        'colors' => [],
+                        'sizes' => [],
+                        'materials' => []
+                    ]
+                ];
+            }
+
+            $variant = [
+                'id' => $product->id,
+                'title' => $product->title,
+                'price' => $product->price,
+                'photo' => $product->photo,
+                'total' => $product->total,
+                'tovar_id' => $product->tovar_id,
+                'color' => null,
+                'sklad' => $product->sklad,
+                'article' => $product->article,
+                'size' => null,
+                'material' => null
+            ];
+
+            foreach ($product->param as $param) {
+                $paramValue = $param->originalParam->original ?? $param->change;
+                $paramType = $param->type;
+
+                switch ($paramType) {
+                    case 'color':
+                        $variant['color'] = $paramValue;
+                        if (!in_array($paramValue, $groupedProducts[$groupKey]['params']['colors'])) {
+                            $groupedProducts[$groupKey]['params']['colors'][] = $paramValue;
+                        }
+                        break;
+                    case 'size':
+                        $variant['size'] = $paramValue;
+                        if (!in_array($paramValue, $groupedProducts[$groupKey]['params']['sizes'])) {
+                            $groupedProducts[$groupKey]['params']['sizes'][] = $paramValue;
+                        }
+                        break;
+                    case 'material':
+                        $variant['material'] = $paramValue;
+                        if (!in_array($paramValue, $groupedProducts[$groupKey]['params']['materials'])) {
+                            $groupedProducts[$groupKey]['params']['materials'][] = $paramValue;
+                        }
+                        break;
+                }
+            }
+
+            $groupedProducts[$groupKey]['variants'][] = $variant;
+        }
+
+        return $groupedProducts;
+    }
 
 
 }

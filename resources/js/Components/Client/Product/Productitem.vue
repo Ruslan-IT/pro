@@ -2,7 +2,7 @@
     <div class="product-card">
         <div class="block__img__cart">
 
-            <Link :href="route('client.products.show', { product: product.id })">
+            <Link :href="route('client.products.show', { product: product.url })">
 
                 <img :src="currentImageUrl"
                      :width="currentProduct.width || '200px'"

@@ -28,6 +28,34 @@ class Product extends Model
     protected $table = 'suppliers_tovars';
     protected $guarded = [];
 
+    /*protected $fillable = [
+        'sid',
+        'tovar_id',
+        'id_parent',
+        'article',
+        'title',
+        'url',
+        'title_full',
+        'title_original',
+        'price',
+        'content',
+        'count_in_box',
+        'v_box',
+        'weight_box',
+        'weight_1',
+        'v_1',
+        'total',
+        'catalog_id',
+        'filtr_size',
+        'sale',
+        'date',
+        'date_update',
+        'photo',
+        'sklad',
+        'photo_src'
+    ];*/
+
+
     public function catalogs(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -36,6 +64,11 @@ class Product extends Model
             'tovar_id',
             'catalog_id'
         );
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'url';
     }
 
 
@@ -68,6 +101,14 @@ class Product extends Model
     public function params(): BelongsToMany
     {
         return $this->belongsToMany(Param::class)->withPivot('value');
+    }
+
+    // В модели Product
+    public function param()
+    {
+        // Указываем правильные ключи:
+        // suppliers_tovars_param.tovar_id -> suppliers_tovars.tovar_id
+        return $this->hasMany(SuppliersTovarsParam::class, 'tovar_id', 'id');
     }
 
     public function category(): BelongsTo

@@ -1,8 +1,12 @@
 <style>
 @import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
 @import url('https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css');
-@import url('https://web-ruslan.ru/css/catalog.css');
-@import url('https://web-ruslan.ru/css/style.css');
+
+
+@import '/public/css/catalog.css';
+@import '/public/css/style.css';
+
+
 </style>
 
 
@@ -94,7 +98,7 @@
                 <div class="row header__menu ">
                     <div class="col-xl-2"></div>
 
-<!--                    <div class="col-xl-8">
+                    <div class="col-xl-8">
                         <nav class="navbar navbar-expand-lg navbar-light bg-light">
                             <div class="container-fluid header__menu">
 
@@ -106,6 +110,62 @@
 
                                             <a class="nav-link catalog__mar" href="#">КАТАЛОГ</a>
                                             <span></span>
+
+
+                                            <section v-if="showCatalogDrop" class="catalog_drop"
+                                                     @mouseenter="handleMenuMouseEnter"
+                                                     @mouseleave="handleMenuMouseLeave">
+                                                <div class="wrap_c">
+                                                    <div class="list">
+
+                                                        <a :href="`/categories/${category.url}/products`" class="item"
+                                                           v-for="category in categories" :key="category.id"
+                                                           @mouseenter="showSubcategories(category.id)">
+
+
+                                                            <div class="table">
+                                                                <div class="margin">
+                                                                    <p style="text-transform: uppercase;">
+
+                                                                        {{category.title }}
+
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <!-- Подкатегории -->
+                                                            <div class="subcategories"
+                                                                 v-if="activeCategory === category.id && category.children?.length"
+                                                                 @mouseenter="cancelClose">
+                                                                <div class="subcategory-column">
+                                                                    <a v-for="subcategory in category.children"
+                                                                       :key="subcategory.id"
+                                                                       :href="`/categories/${subcategory.url}/products`"
+                                                                       @mouseenter="showSubSubcategories(subcategory.id)">
+                                                                        {{ subcategory.title }}
+                                                                    </a>
+                                                                </div>
+
+                                                                <!-- Под-подкатегории -->
+                                                                <div class="sub-subcategories"
+                                                                     v-if="activeSubcategory"
+                                                                     @mouseenter="cancelClose">
+                                                                    <div
+                                                                        v-for="subsubcategory in getSubSubcategories(activeSubcategory)"
+                                                                        :key="subsubcategory.id">
+                                                                        <a :href="`/catalog/${subsubcategory.url}/`">
+                                                                            {{ subsubcategory.title }}
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </section>
+
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="#">ПОРТФОЛИО</a>
@@ -152,67 +212,17 @@
 
 
                                     </ul>
-                                    &lt;!&ndash; Кнопка закрытия (крестик) - видна только в мобильном меню &ndash;&gt;
+                                    <!-- Кнопка закрытия (крестик) - видна только в мобильном меню -->
                                     <button class="btn-close d-lg-none ms-auto" type="button" data-bs-toggle="collapse"
                                             data-bs-target="#navbarNav" aria-controls="navbarNav"
                                             aria-label="Close"></button>
                                 </div>
-                                <section v-if="showCatalogDrop" class="catalog_drop"
-                                         @mouseenter="handleMenuMouseEnter"
-                                         @mouseleave="handleMenuMouseLeave">
-                                    <div class="wrap_c">
-                                        <div class="list">
-                                            &lt;!&ndash;                                            :href="`/catalog/${category.url}/`"&ndash;&gt;
-                                            <a :href="`/catalog/${category.url}/`" class="item"
-                                               v-for="category in categories" :key="category.id"
-                                               @mouseenter="showSubcategories(category.id)">
 
-                                                    <span>
-                                                        <div class="table">
-                                                            <div class="margin">
-                                                                <p style="text-transform: uppercase;">{{
-                                                                        category.title
-                                                                    }}</p>
-                                                            </div>
-                                                        </div>
-                                                    </span>
-
-                                                &lt;!&ndash; Подкатегории &ndash;&gt;
-                                                <div class="subcategories"
-                                                     v-if="activeCategory === category.id && category.children?.length"
-                                                     @mouseenter="cancelClose">
-                                                    <div class="subcategory-column">
-                                                        <a v-for="subcategory in category.children"
-                                                           :key="subcategory.id"
-                                                           :href="`/categories/${subcategory.id}/products`"
-                                                           @mouseenter="showSubSubcategories(subcategory.id)">
-                                                            {{ subcategory.title }}
-                                                        </a>
-                                                    </div>
-
-                                                    &lt;!&ndash; Под-подкатегории &ndash;&gt;
-                                                    <div class="sub-subcategories"
-                                                         v-if="activeSubcategory"
-                                                         @mouseenter="cancelClose">
-                                                        <div
-                                                            v-for="subsubcategory in getSubSubcategories(activeSubcategory)"
-                                                            :key="subsubcategory.id">
-                                                            <a :href="`/catalog/${subsubcategory.url}/`">
-                                                                {{ subsubcategory.title }}
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </a>
-                                        </div>
-                                    </div>
-                                </section>
                             </div>
 
                         </nav>
 
-                    </div>-->
+                    </div>
 
                     <div class="col-xl-2"></div>
 
@@ -278,14 +288,16 @@
                              alt="Основное фото товара"
                              class="main-image">
 
-                        <!-- Миниатюры вариантов -->
-                        <div class="row product__block">
-                            <div class="col-4" v-for="(img, index) in allImages" :key="index">
+
+                        <!-- Миниатюры дополнительных изображений для текущего варианта -->
+                        <div class="row product__block" v-if="hasAdditionalImages">
+                            <div class="col-4" v-for="(img, index) in validAdditionalImages" :key="index">
                                 <img :src="img"
-                                     alt="Миниатюра"
+                                     alt="Дополнительное фото"
                                      class="thumbnail"
                                      :class="{ 'active': currentImage === img }"
-                                     @click="changeMainImage(img)">
+                                     @click="changeMainImage(img)"
+                                     @error="handleImageError(index)">
                             </div>
                         </div>
                     </div>
@@ -328,13 +340,136 @@
                                     <img v-for="(variant, index) in uniqueColorVariants"
                                          :key="'variant-'+index"
                                          :src="getVariantImage(variant)"
-                                         alt="Миниатюра"
+                                         :alt="{variant}"
                                          class="small-thumbnail"
-                                         :class="{ 'active': currentProduct.id === variant.id }"
+                                         :class="{ 'active': selectedColor === variant.color }"
                                          @click="selectVariant(variant)">
                                 </div>
                             </div>
+
+
                         </div>
+
+                        <!-- Блок с параметрами -->
+                        <div class="order-block" v-if="selectedColor">
+                            <!-- Шапка с колонками -->
+                            <div class="grid-header">
+                                <div class="header-item">Наличие</div>
+                                <div class="header-item">Введите количество</div>
+                                <div class="header-item">Размер</div>
+                                <div class="header-item">Цена</div>
+                            </div>
+
+                            <!-- Строки с вариантами выбранного цвета -->
+                            <div class="product-row" v-for="(variantGroup, index) in variantsForSelectedColor" :key="index">
+                                <div class="stock">
+                                    {{ variantGroup.total > 0 ? variantGroup.total + ' шт' : 'по запросу' }}
+                                </div>
+                                <div>
+                                    <input type="number"
+                                           min="0"
+                                           :max="variantGroup.total"
+                                           class="quantity-input"
+                                           v-model="variantGroup.quantity">
+                                </div>
+                                <div>{{ variantGroup.size }}</div>
+                                <div>{{ variantGroup.price }} ₽</div>
+                            </div>
+
+                            <!-- Итоговая сумма -->
+                            <div class="total-section__bock">
+                                <div class="total-section">
+                                    <div>
+                                        <div class="total-text">Итого</div>
+                                        <div class="total-price">{{ calculateTotal() }} ₽</div>
+                                    </div>
+                                </div>
+                                <div class="total-section__button">
+                                    <button class="btn btn-primary submit-btn btn__red">ЗАПРОСИТЬ</button>
+                                </div>
+                            </div>
+
+                            <div class="note">
+                                *указанная сумма не включает в себя стоимость нанесения логотипа
+                            </div>
+                        </div>
+
+                        <button class="order-btn">Заказ принимается на сумму от 5000 Руб..</button>
+
+                        <div class="tabs-container">
+                            <div class="tab-buttons">
+                                <button
+                                    class="tab-btn"
+                                    :class="{ 'active': activeTab === 'description' }"
+                                    @click="switchTab('description')"
+                                >
+                                    Описание
+                                </button>
+                                <button
+                                    class="tab-btn"
+                                    :class="{ 'active': activeTab === 'characteristics' }"
+                                    @click="switchTab('characteristics')"
+                                >
+                                    Характеристики
+                                </button>
+                                <button
+                                    class="tab-btn"
+                                    :class="{ 'active': activeTab === 'payment' }"
+                                    @click="switchTab('payment')"
+                                >
+                                    Оплата
+                                </button>
+                                <button
+                                    class="tab-btn"
+                                    :class="{ 'active': activeTab === 'delivery' }"
+                                    @click="switchTab('delivery')"
+                                >
+                                    Доставка
+                                </button>
+                            </div>
+
+                            <div id="description" class="tab-content" v-show="activeTab === 'description'">
+                                <div class="property-item" v-html="tabData.description"></div>
+                            </div>
+
+                            <div id="characteristics" class="tab-content" v-show="activeTab === 'characteristics'">
+                                <div class="property-item">
+                                    <div class="property-title">Цвет</div>
+                                    <div>{{ tabData.characteristics.color }}</div>
+                                </div>
+                                <div class="property-item">
+                                    <div class="property-title">Размеры</div>
+                                    <div>{{ tabData.characteristics.size }}</div>
+                                </div>
+                                <div class="property-item">
+                                    <div class="property-title">Габариты</div>
+                                    <div>{{ tabData.characteristics.dimensions }}</div>
+                                </div>
+                            </div>
+
+                            <div id="payment" class="tab-content" v-show="activeTab === 'payment'">
+                                <div class="property-item">
+                                    <div class="property-title">Способы оплаты</div>
+                                    <div>{{ tabData.payment.methods }}</div>
+                                </div>
+                                <div class="property-item">
+                                    <div class="property-title">Рассрочка</div>
+                                    <div>{{ tabData.payment.installment }}</div>
+                                </div>
+                            </div>
+
+                            <div id="delivery" class="tab-content" v-show="activeTab === 'delivery'">
+                                <div class="property-item">
+                                    <div class="property-title">Сроки доставки</div>
+                                    <div>{{ tabData.delivery.time }}</div>
+                                </div>
+                                <div class="property-item">
+                                    <div class="property-title">Стоимость</div>
+                                    <div>{{ tabData.delivery.cost }}</div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -347,19 +482,148 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Link } from '@inertiajs/vue3';
+
+
+// Инициализация при загрузке компонента
+onMounted(() => {
+    if (props.product.variants && props.product.variants.length > 0) {
+        // Берем первый вариант из списка
+        const firstVariant = props.product.variants[0];
+        selectVariant(firstVariant);
+    }
+});
 
 const props = defineProps({
     product: {
         type: Object,
         required: true
-    }
+    },
+    categories: Array,        // Все категории для меню
+    subcategories: Array,     // Подкатегории
 });
 
 const currentImage = ref(getProductImage(props.product));
 const activeVariant = ref(null);
-const hoverVariant = ref(null);
+const selectedColor = ref(null);
+const showCatalogDrop = ref(false);
+const activeCategory = ref(null);
+const activeSubcategory = ref(null);
+const closeTimer = ref(null);
+const isHovering = ref(false);
+
+const activeTab = ref('description'); // По умолчанию активна вкладка "Оплата"
+
+// Метод для переключения вкладок
+const switchTab = (tabName) => {
+    activeTab.value = tabName;
+};
+
+// Вычисляемые свойства для вкладок
+const tabData = computed(() => {
+    return {
+        //description: currentProduct.value.content || 'Описание товара отсутствует',
+        description: props.product.content || 'Описание товара отсутствует', // Берем из основного продукта, а не из варианта
+        characteristics: {
+            color: selectedColor.value || 'Не указан',
+            size: variantsForSelectedColor.value.map(v => v.size).join(', ') || 'Не указан',
+            dimensions: currentProduct.value.dimensions || 'Не указаны'
+        },
+        payment: {
+            methods: 'Наличные, карта, безналичный расчет',
+            installment: 'До 12 месяцев'
+        },
+        delivery: {
+            time: '1-3 рабочих дня',
+            cost: 'Бесплатно при заказе от 5000 Руб.'
+        }
+    };
+});
+
+
+
+
+// Функции для работы с каталогом
+const openCatalogMenu = () => {
+    clearTimeout(closeTimer.value)
+    showCatalogDrop.value = true
+    isHovering.value = true
+}
+
+const closeCatalogMenu = () => {
+    closeTimer.value = setTimeout(() => {
+        if (!isHovering.value) {
+            showCatalogDrop.value = false
+            activeCategory.value = null
+            activeSubcategory.value = null
+        }
+    }, 300)
+}
+
+
+const showSubcategories = (categoryId) => {
+    activeCategory.value = categoryId
+    activeSubcategory.value = null
+}
+const handleMenuMouseEnter = () => {
+    isHovering.value = true
+    clearTimeout(closeTimer.value)
+}
+
+const handleMenuMouseLeave = () => {
+    isHovering.value = false
+    closeCatalogMenu()
+}
+const showSubSubcategories = (subcategoryId) => {
+    activeSubcategory.value = subcategoryId
+}
+const getSubSubcategories = (subcategoryId) => {
+    if (!activeCategory.value) return []
+
+    const category = props.categories.find(c => c.id === activeCategory.value)
+    if (!category || !category.children) return []
+
+    const subcategory = category.children.find(sc => sc.id === subcategoryId)
+    return subcategory?.children || []
+}
+
+const cancelClose = () => {
+    clearTimeout(closeTimer.value)
+}
+
+
+
+
+
+// Группируем варианты по цвету и размеру
+const variantsGrouped = computed(() => {
+    const grouped = {};
+
+    props.product.variants.forEach(variant => {
+        const key = `${variant.color}_${variant.size}`;
+
+        if (!grouped[variant.color]) {
+            grouped[variant.color] = {};
+        }
+
+        if (!grouped[variant.color][variant.size]) {
+            grouped[variant.color][variant.size] = {
+                ...variant,
+                total: 0,
+                variants: []
+            };
+        }
+
+        // Суммируем количество для одинаковых размеров
+        grouped[variant.color][variant.size].total += variant.total || 0;
+        grouped[variant.color][variant.size].variants.push(variant);
+    });
+
+    return grouped;
+});
+
+
 
 // Вычисляемые свойства
 const currentProduct = computed(() => activeVariant.value || props.product);
@@ -367,23 +631,19 @@ const currentStock = computed(() => currentProduct.value.total || 0);
 const currentArticle = computed(() => currentProduct.value.article || '');
 const currentWarehouse = computed(() => currentProduct.value.sklad || 'Москва');
 
+// Уникальные цветовые варианты для миниатюр
 const uniqueColorVariants = computed(() => {
-    if (!props.product.variants?.length) return [];
+    const colors = new Set();
+    const result = [];
 
-    const variants = [...props.product.variants];
-
-    if (props.product.color) {
-        variants.unshift({ ...props.product, isMain: true });
-    }
-
-    const colorMap = new Map();
-    variants.forEach(variant => {
-        if (variant.color && !colorMap.has(variant.color)) {
-            colorMap.set(variant.color, variant);
+    props.product.variants.forEach(variant => {
+        if (!colors.has(variant.color)) {
+            colors.add(variant.color);
+            result.push(variant);
         }
     });
 
-    return Array.from(colorMap.values());
+    return result;
 });
 
 const allImages = computed(() => {
@@ -423,6 +683,52 @@ const getShortProductName = (product) => {
     return shortName;
 };
 
+const currentAdditionalImages = computed(() => {
+    if (!currentProduct.value) return [];
+
+    const baseImageUrl = getProductImage(currentProduct.value);
+    const baseUrlParts = baseImageUrl.split('/');
+    const imageName = baseUrlParts[baseUrlParts.length - 1];
+    const basePath = baseImageUrl.replace(imageName, '');
+
+    const additionalImages = [];
+
+    // Проверяем существование изображений с префиксами 1_, 2_ и т.д.
+    for (let i = 1; i <= 5; i++) { // Проверяем до 5 дополнительных изображений
+        const additionalImageName = `${i}_${imageName}`;
+        const additionalImageUrl = `${basePath}${additionalImageName}`;
+
+
+        // просто формируем URL по шаблону
+        additionalImages.push(additionalImageUrl);
+    }
+
+    return additionalImages;
+});
+
+
+const imageErrors = ref([]);
+
+// Проверяем, есть ли вообще дополнительные изображения
+const hasAdditionalImages = computed(() => {
+    return currentAdditionalImages.value.some(img => !imageErrors.value.includes(img));
+});
+
+// Получаем только валидные изображения (те, которые загрузились)
+const validAdditionalImages = computed(() => {
+    return currentAdditionalImages.value.filter(img => !imageErrors.value.includes(img));
+});
+
+// Обработчик ошибок загрузки изображений
+function handleImageError(index) {
+    const imgUrl = currentAdditionalImages.value[index];
+    if (!imageErrors.value.includes(imgUrl)) {
+        imageErrors.value.push(imgUrl);
+    }
+}
+
+
+
 // Методы
 function getVariantStock(variant) {
     return variant.total || 0;
@@ -431,7 +737,18 @@ function getVariantStock(variant) {
 function selectVariant(variant) {
     activeVariant.value = prepareVariantData(variant);
     currentImage.value = getVariantImage(variant);
+    selectedColor.value = variant.color;
+    // Сбрасываем активную вкладку при изменении варианта
+    //activeTab.value = 'description';
 }
+
+// Варианты для выбранного цвета (уже сгруппированные по размеру)
+const variantsForSelectedColor = computed(() => {
+    if (!selectedColor.value || !variantsGrouped.value[selectedColor.value]) {
+        return [];
+    }
+    return Object.values(variantsGrouped.value[selectedColor.value]);
+});
 
 function changeMainImage(newImage) {
     currentImage.value = newImage;
@@ -443,7 +760,10 @@ function getProductImage(product) {
 
     const sid = product.sid;
     const tovarId = product.tovar_id || product.id_parent || product.id;
-    if (sid && tovarId) return `https://mvgifts.ru/img/tovars/${sid}/${tovarId}/${tovarId}.jpg`;
+    if (sid && tovarId) {
+        // Основное изображение имеет вид: /img/tovars/{sid}/{tovarId}/{tovarId}.jpg
+        return `https://mvgifts.ru/img/tovars/${sid}/${tovarId}/${tovarId}.jpg`;
+    }
 
     return 'https://via.placeholder.com/200?text=No+Image';
 }
@@ -473,6 +793,19 @@ function prepareVariantData(variant) {
         url_img: variant.photo || variant.url_img || props.product.url_img
     };
 }
+
+function calculateTotal() {
+    let total = 0;
+    if (variantsForSelectedColor.value) {
+        variantsForSelectedColor.value.forEach(variantGroup => {
+            const quantity = variantGroup.quantity || 0;
+            total += quantity * variantGroup.price;
+        });
+    }
+    return total.toLocaleString('ru-RU');
+}
+
+
 </script>
 
 
@@ -626,6 +959,244 @@ function prepareVariantData(variant) {
     .vertical__block {
         margin-top: 15px;
     }
+}
+
+
+/*********************************/
+.order-block {
+    margin-top: 20px;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.grid-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 3fr 1fr;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+.product-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 3fr 1fr;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.quantity-input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.total-section__bock {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.total-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.note {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+.collapse {
+    visibility: visible;
+}
+
+
+
+
+
+
+.catalog_drop {
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    width: 100%;
+    left: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease;
+}
+.catalog__desc:hover .catalog_drop,
+.catalog_drop:hover {
+    display: block;
+}
+
+
+.sub-subcategories {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background: white;
+    min-width: 250px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 0
+}
+
+/* Для плавного появления/исчезновения */
+.catalog-enter-active, .catalog-leave-active {
+    transition: all 0.3s;
+}
+
+.catalog-enter-from, .catalog-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+#catalog .active-category {
+    font-weight: bold;
+    color: #ee2a27; /* или любой другой цвет для выделения */
+}
+
+#catalog .active-category span {
+    font-weight: bold;
+    color: #ee2a27;
+}
+
+
+/********************************************************************************************/
+
+.header .catalog_drop .list {
+    display: flex !important;
+    flex-direction: column !important;
+    border: none;
+}
+
+.header .catalog_drop .list .item .items a .table .margin p {
+    padding-left: 0;
+    margin-bottom: 0;
+    font-size: 11px;
+    color: #000;
+}
+
+
+
+.header .catalog_drop .list .item {
+    border-right: 0;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    height: 40px;
+    justify-content: center;
+    padding: 10px 10px;
+}
+
+
+.header .catalog_drop .list .item .items a .table {
+    padding-left: 0;
+    height: 100%;
+}
+
+.header .catalog_drop .list {
+    padding: 0;
+    max-width: 300px;
+}
+
+.catalog_drop {
+    background: none;
+}
+
+.wrap_c {
+    max-width: 100%;
+    width: 100%;
+    text-align: left;
+}
+
+.header .catalog_drop .list .item .items a {
+    display: block;
+    text-decoration: none;
+    color: #000;
+    font-size: 13px;
+    position: relative;
+    transition: .3s all;
+    margin: 0 0 10px 0;
+    text-transform: uppercase
+}
+
+.subcategories {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background: white;
+    min-width: 250px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 0 0 0 0;
+}
+
+.item .table {
+    margin: 0;
+
+}
+
+.item:hover {
+    color: #ee2a27;
+    background-color: #d6d6d6;
+}
+
+.subcategory-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.subcategory-column a {
+    padding: 9px 10px;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+.subcategory-column a:hover {
+
+    background-color: #d6d6d6;
+}
+
+/*** Стили для характеристик ***/
+.tab-btn.active {
+    background-color: #f0f0f0;
+    border-bottom: 2px solid #ee2a27;
+}
+
+.tab-content {
+    display: none;
+    padding: 15px 0;
+}
+
+.tab-content[v-show] {
+    display: block;
+}
+
+.property-item >>> p {
+    margin-bottom: 0.5rem;
+}
+
+.property-item >>> ul {
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.property-item >>> li {
+    margin-bottom: 0.25rem;
+}
+.tab-content[data-v-6a754aab]{
+    display: block;
+}
+/************************************/
+.product-price {
+    font-size: 36px!important;
 }
 
 </style>

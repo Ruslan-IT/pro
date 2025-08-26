@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class SuppliersTovarsCatalogs extends Model
 {
     protected $table = 'suppliers_tovars_catalogs';
+
+
+
+
 }

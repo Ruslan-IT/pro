@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductResource;
+use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -12,9 +13,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        //$products = ProductResource::collection(Product::whereNull('id_parent')->get())->resolve();
-        //$products = ProductResource::collection(Product::get())->resolve();
-        //return  inertia('Client/Product/Index', compact('products'));
+
 
         $products = ProductResource::collection(Product::limit(10)->get())->resolve();
         //dd($products);
@@ -26,22 +25,58 @@ class ProductController extends Controller
 
     }
 
-    public function show(Product $product)
+    public function search(Request $request)
     {
+
+        $query = $request->input('query');
+
+        if (empty($query)) {
+            return response()->json([]);
+        }
+
+        $products = Product::where('title', 'like', "%{$query}%")
+            ->orWhere('article', 'like', "%{$query}%")
+            ->limit(10)
+            ->get(['id', 'title', 'article', 'url', 'price']);
+
+        return response()->json($products);
+    }
+
+    public function show(Category $catalogs, Product $product)
+    {
+
+        // 1. Получаем базовые данные (категории, хлебные крошки)
+        $breadcrumbs = array_reverse(CategoryService::getCategoryParents($catalogs)) ?: $catalogs;
+        $categoryChildren = CategoryService::getCategoryChildren2($catalogs);
+        $categoryChildrenAll = $categoryChildren['childrenAll'][0]->values()->toArray();
+
+
+
 
         // Получаем базовое название без цвета/размера
         $baseTitle = CategoryService::generateGroupKey($product->title);
 
+        $products = Product::with(['param.originalParam'])
+            ->where('title', 'LIKE', $baseTitle . '%')
+            ->get();
+
         // Ищем все товары, где название начинается с базового
-        $products = Product::where('title', 'LIKE', $baseTitle . '%')->get();
+        //$products = Product::where('title', 'LIKE', $baseTitle . '%')->get();
 
 
 
         // Группируем
-        $grouped = CategoryService::groupProductsByIdWithTitles($products);
+        $grouped = collect(CategoryService::getProductParamVariants($products));
+
+        //dd($categoryChildrenAll);
+
 
         return inertia('Client/Product/Show', [
-            'product' => ProductResource::make($grouped->first())->resolve()
+            'product' => ProductResource::make($grouped->first())->resolve(),
+            'breadcrumbs' => $breadcrumbs,
+            'catalogs' => $catalogs,
+            'categories' => $categoryChildren['catalog_tree'],
+
         ]);
 
     }

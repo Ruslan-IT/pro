@@ -13,65 +13,51 @@ class ProductResource extends JsonResource
 {
     public function toArray($request): array
     {
-        $url = 'https://mvgifts.ru/img/tovars/' . $this->sid . '/' . $this->tovar_id . '/' . $this->tovar_id .'.jpg';
+        // Для работы с массивом используем array-доступ
+        $data = is_array($this->resource) ? $this->resource : $this->resource->toArray();
 
-        // Получаем размеры изображения с обработкой ошибок
+        $url = 'https://mvgifts.ru/img/tovars/' . $data['sid'] . '/' . $data['tovar_id'] . '/' . $data['tovar_id'] .'.jpg';
+
+        // Получаем размеры изображения (упрощенная версия)
         $height = 200;
         $width = 200;
 
-        try {
-            $wh = getimagesize($url);
-            if ($wh) {
-                $height = $wh[1];
-                $width = $wh[0];
-                if ($wh[1] > 200) {
-                    $height = 200;
-                    $width = ($height * $wh[0]) / $wh[1];
-                }
-                if ($width > 200) {
-                    $width = 200;
-                    $height = ($width * $wh[1]) / $wh[0];
-                }
-            }
-        } catch (\Exception $e) {
-            // В случае ошибки оставляем значения по умолчанию
-        }
-
-        // Обработка вариантов - теперь работает и с массивом, и с коллекцией
-        $variants = [];
-        if (!empty($this->variants)) {
-            // Если variants - это коллекция, преобразуем в массив
-            $variantsArray = is_array($this->variants) ? $this->variants : $this->variants->toArray();
-
-            foreach ($variantsArray as $variant) {
-                $variants[] = [
-                    'id' => $variant['id'] ?? null,
-                    'title' => $variant['title'] ?? null,
-                    'price' => $variant['price'] ?? null,
-                    'photo' => $variant['photo'] ?? null,
-                    'total' => $variant['total'] ?? null,
-                    'tovar_id' => $variant['tovar_id'] ?? null,
-                    'color' => $variant['color'] ?? null,
-                    'sklad' => $variant['sklad'] ?? null,
-                    'article' => $variant['article'] ?? null,
-                ];
-            }
-        }
-
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'sid' => $this->sid,
+            'id' => $data['id'],
+            'title' => $data['title'],
+            'sid' => $data['sid'],
+            'url' => $data['url'],
             'url_img' => $url,
             'height' => $height.'px',
             'width' => $width.'px',
-            'article' => $this->article,
-            'total' => $this->total,
-            'id_parent' => $this->id_parent,
-            'price' => $this->price,
-            'base_title' => $this->base_title ?? null,
-            'variants' => $variants,
+            'article' => $data['article'],
+            'content' => $data['content'],
+            'total' => $data['total'],
+            'id_parent' => $data['id_parent'],
+            'price' => $data['price'],
+            'base_title' => $data['base_title'] ?? null,
+            'variants' => $this->formatVariants($data['variants'] ?? []),
+            'params' => $data['params'] ?? null, // Добавляем параметры
         ];
+    }
+
+    protected function formatVariants(array $variants): array
+    {
+        return array_map(function ($variant) {
+            return [
+                'id' => $variant['id'],
+                'title' => $variant['title'],
+                'price' => $variant['price'],
+                'photo' => $variant['photo'],
+                'total' => $variant['total'],
+                'tovar_id' => $variant['tovar_id'],
+                'color' => $variant['color'],
+                'sklad' => $variant['sklad'],
+                'article' => $variant['article'],
+                'size' => $variant['size'] ?? null,
+                'material' => $variant['material'] ?? null,
+            ];
+        }, $variants);
     }
 }
 
