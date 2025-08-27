@@ -327,7 +327,7 @@
                                         </button>
                                     </div>
 
-                                    <div class="h3">Все разделы</div>
+                                    <div class="h3">Все разделы1</div>
                                     <div class="">
                                         <div id="catalog" v-if="product_count_subcategories.length > 0">
                                             <div>
