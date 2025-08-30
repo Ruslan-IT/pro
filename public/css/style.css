@@ -2161,4 +2161,138 @@ footer {
 /********************Стили для поиска****************************/
 /************************************************/
 
+/********************************************************************************************/
 
+.catalog_drop {
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    left: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease;
+}
+.catalog__desc:hover .catalog_drop,
+.catalog_drop:hover {
+    display: block;
+}
+
+
+.sub-subcategories {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background: white;
+    min-width: 250px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 0
+}
+
+/* Для плавного появления/исчезновения */
+.catalog-enter-active, .catalog-leave-active {
+    transition: all 0.3s;
+}
+
+.catalog-enter-from, .catalog-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+
+.wrap_c {
+    max-width: 100%;
+    width: 100%;
+    text-align: left;
+}
+
+.header .catalog_drop .list .item .items a {
+    display: block;
+    text-decoration: none;
+    color: #000;
+    font-size: 13px;
+    position: relative;
+    transition: .3s all;
+    margin: 0 0 10px 0;
+    text-transform: uppercase
+}
+
+.header .catalog_drop .list {
+    padding: 0;
+    max-width: 300px;
+}
+
+.header .catalog_drop .list .item {
+    border-right: 0;
+    display: flex;
+    align-items: flex-end;
+    height: 40px;
+    justify-content: center;
+    padding: 10px 10px;
+}
+
+
+.subcategories {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background: white;
+    min-width: 250px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 0 0 0 0;
+}
+
+.item .table {
+    margin: 0;
+
+}
+
+.item:hover {
+    color: #ee2a27;
+    background-color: #d6d6d6;
+}
+
+.subcategory-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.subcategory-column a {
+    padding: 9px 10px;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+.subcategory-column a:hover {
+
+    background-color: #d6d6d6;
+}
+
+.margin p {
+    margin: 0;
+}
+
+
+#catalog .active-category {
+    font-weight: bold;
+    color: #ee2a27; /* или любой другой цвет для выделения */
+}
+
+#catalog .active-category span {
+    font-weight: bold;
+    color: #ee2a27;
+}
+
+
+
+
+/********************************************************************************************/
+
+.collapse {
+    visibility: visible;
+}
+
+
+@media (max-width: 500px) {
+    .news-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr))!important;
+    }
+}

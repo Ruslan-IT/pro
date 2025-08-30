@@ -1,12 +1,13 @@
 <style>
 @import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
 @import url('https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css');
-@import url('http://83.222.25.123/css/catalog.css');
-@import url('http://83.222.25.123/css/style.css');
+/*@import url('http://83.222.25.123/css/catalog.css');
+@import url('http://83.222.25.123/css/style.css');*/
 </style>
 
 <template>
     <div class="wrapper">
+
         <header class="header">
 
             <div class="row header__top__block__main">
@@ -189,6 +190,7 @@
             </section>
 
         </header>
+
         <main class="main">
             <section class="breadcrumbs__block">
                 <div class="container">
