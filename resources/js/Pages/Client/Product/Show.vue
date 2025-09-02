@@ -556,7 +556,7 @@ function calculateTotal() {
 /* Стили для вертикальных миниатюр */
 .vertical-thumbnails {
     display: flex;
-    flex-direction: column;
+    /*flex-direction: column;*/
     gap: 10px;
 }
 
