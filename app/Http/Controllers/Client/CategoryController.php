@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Category\ProductIndexRequest;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Category;
+use App\Models\Drawing;
 use App\Models\GlobalOriginalParamChange;
 use App\Models\Product;
 use App\Models\SuppliersTovarsCatalogs;
@@ -25,6 +26,9 @@ class CategoryController extends Controller
         $breadcrumbs = array_reverse(CategoryService::getCategoryParents($catalogs)) ?: $catalogs;
         $categoryChildren = CategoryService::getCategoryChildren2($catalogs);
         $categoryChildrenAll = $categoryChildren['childrenAll'][0]->values()->toArray();
+
+        // Получаем все виды нанесения
+        $drawings = Drawing::all();
 
 
 
@@ -139,6 +143,7 @@ class CategoryController extends Controller
                     'last_page' => $products->lastPage(),
                 ],
                 'params' => $params_group, // Все параметры категории
+                'drawings' => $drawings,
             ]);
         }
 
@@ -154,6 +159,7 @@ class CategoryController extends Controller
             'params' => $params_group, // Все параметры категории
             'total_count' => $products->total(),
             'pagination' => $products->toArray(),
+            'drawings' => $drawings,
         ]);
     }
 

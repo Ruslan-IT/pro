@@ -252,7 +252,8 @@ const props = defineProps({
     product_count_subcategories: Array, // Подкатегории с количеством товаров
     categories: Array,        // Все категории для меню
     params: Object,           // Параметры фильтрации
-    total_count: Number       // Общее количество товаров
+    total_count: Number,      // Общее количество товаров
+    drawings: Array
 })
 
 // Реактивные состояния
