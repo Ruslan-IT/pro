@@ -12,9 +12,11 @@
             <div class="container">
 
 
-                <Link href="/portfolio" class="back-link">← Назад к портфолио</Link>
+
 
                 <article class="portfolio-article">
+                    <Link href="/portfolio" class="back-link">← Назад к портфолио</Link>
+
                     <h1 class="portfolio-title">{{ portfolioItem.title }}</h1>
 
 <!--                            <div class="portfolio-meta">
@@ -25,6 +27,7 @@
                         <img :src="portfolioItem.image" :alt="portfolioItem.title">
                     </div>-->
 
+                    <div class="portfolio-content" v-html="portfolioItem.excerpt"></div>
                     <div class="portfolio-content" v-html="portfolioItem.content"></div>
 
                     <!-- Галерея изображений -->
@@ -219,5 +222,18 @@ figure {
     display: none;
 }
 
+
+@media (max-width: 600px) {
+    .portfolio-title {
+        font-size: 1.5rem;
+    }
+    .portfolio-article {
+        padding: 0;
+    }
+    .portfolio-content {
+        margin-bottom: 0;
+    }
+
+}
 
 </style>

@@ -2,6 +2,8 @@
 
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Client\SearchController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
@@ -37,3 +39,10 @@ Route::get('/payment-delivery', [App\Http\Controllers\Client\PaymentDeliveryCont
 // Страница контактов
 Route::get('/contacts', [App\Http\Controllers\Client\ContactController::class, 'index'])->name('client.contacts.index');
 
+// Политика конфиденциальности (редирект на общий маршрут)
+Route::get('/privacy-policy', function () {
+    return redirect()->route('pages.show', 'privacy-policy');
+});
+
+// Страницы
+Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show');

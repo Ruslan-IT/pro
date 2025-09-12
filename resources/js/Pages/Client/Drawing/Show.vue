@@ -140,4 +140,15 @@ export default {
     text-align: left;
 
 }
+
+
+@media (max-width: 600px) {
+   .drawing-sidebar{
+       display: none;
+   }
+    .drawing-layout[data-v-0cba24da] {
+        grid-template-columns: 100% 1fr;
+    }
+
+}
 </style>

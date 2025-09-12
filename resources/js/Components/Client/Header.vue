@@ -21,9 +21,10 @@
                             </div>
                             <span>|</span>
                             <div class="header__top__block">
-                                <div class="header__top__cart">
+                                <div class="header__top__cart" @click="cartStore.toggleCart()">
                                     <div class="header__top__img">
                                         <img src="/img/cart.png" alt="">
+                                        <span id="cart_qty" v-if="cartStore.totalItems > 0">{{ cartStore.totalItems }}</span>
                                     </div>
                                     <div class="header__top__info">
                                         <p class="min__order">Минимальный заказ</p>
@@ -60,7 +61,7 @@
                                @blur="hideSearchResults">
 
                         <div class="input-group-append">
-                            <button class="btn btn-secondary" type="button">
+                            <button class="btn btn-secondary" type="button" @click="submitSearch">
                                 <img src="https://web-ruslan.ru/img/ser.png" alt="search">
                             </button>
                         </div>
@@ -76,6 +77,11 @@
                                 <Link :href="route('client.products.show', result.url)">
                                     {{ result.title }} ({{ result.article }})
                                 </Link>
+                            </div>
+                            <div class="search-result-item view-all" v-if="searchQuery">
+                                <a href="#" @click.prevent="goToSearchPage">
+                                    Все результаты по запросу "{{ searchQuery }}"
+                                </a>
                             </div>
                         </div>
 
@@ -168,8 +174,9 @@
 
                                     <!-- Портфолио -->
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">ПОРТФОЛИО</a>
+                                        <a class="nav-link" href="/drawing/tampopechat">ПОРТФОЛИО</a>
                                     </li>
+
 
                                     <!-- Нанесение -->
                                     <li class="nav-item drawing-menu"
@@ -241,13 +248,254 @@
                 <div class="col-xl-2"></div>
             </div>
         </div>
+        <!-- Popup корзины -->
+        <div v-if="cartStore.isOpen" class="cart-popup-overlay" @click.self="cartStore.closeCart()">
+            <div class="cart-popup">
+                <div class="cart-popup-header">
+                    <h3>Корзина</h3>
+                    <button class="close-cart" @click="cartStore.closeCart()">×</button>
+                </div>
+
+                <div class="cart-popup-content">
+                    <!-- Блок для отображения успешных сообщений -->
+                    <div v-if="successMessage" class="success-message">
+                        {{ successMessage }}
+                    </div>
+
+                    <!-- Блок для отображения ошибок -->
+                    <div v-if="errorMessage" class="error-message">
+                        {{ errorMessage }}
+                        <button class="error-close" @click="errorMessage = ''">×</button>
+                    </div>
+
+                    <div v-if="cartStore.items.length === 0" class="empty-cart">
+                        Корзина пуста
+                    </div>
+
+                    <div v-else>
+                        <div v-for="(item, index) in cartStore.items" :key="index" class="cart-item">
+                            <div class="cart-item-image">
+                                <img :src="item.image" :alt="item.title">
+                            </div>
+
+                            <div class="cart-item-details">
+                                <h4>{{ item.title }}</h4>
+                                <p>Цвет: {{ item.color }}, Размер: {{ item.size }}</p>
+                                <p>Артикул: {{ item.article }}</p>
+
+                                <!-- Переключатель нанесения -->
+                                <div class="printing-option">
+<!--                                    <span class="printing-label">Нанесение:</span>-->
+                                    <div class="printing-buttons">
+                                        <button
+                                            :class="{ 'printing-btn': true, 'active': !item.withPrinting }"
+                                            @click="setPrinting(index, false)"
+                                        >
+                                            Без нанесения
+                                        </button>
+                                        <button
+                                            :class="{ 'printing-btn': true, 'active': item.withPrinting }"
+                                            @click="setPrinting(index, true)"
+                                        >
+                                            С нанесением (+ {{ cartStore.printingCost }} ₽)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="cart-item-price">
+                                    {{ itemPrice(item) }} ₽ × {{ item.quantity }} = {{ (itemPrice(item) * item.quantity) }} ₽
+                                </div>
+                            </div>
+
+                            <div class="cart-item-controls">
+                                <div class="quantity-controls">
+                                    <button @click="cartStore.updateQuantity(index, item.quantity - 1)">-</button>
+                                    <span>{{ item.quantity }}</span>
+                                    <button @click="cartStore.updateQuantity(index, item.quantity + 1)">+</button>
+                                </div>
+                                <button class="remove-item" @click="cartStore.removeItem(index)">Удалить</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cart-popup-footer" v-if="cartStore.items.length > 0">
+                    <!-- Форма для данных пользователя -->
+                    <form @submit.prevent="submitOrder" class="order-form">
+                        <div class="form-group">
+                            <label for="name"></label>
+                            <input
+                                type="text"
+                                id="name"
+                                v-model="orderForm.name"
+                                placeholder="Ваше имя"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone"></label>
+                            <input
+                                type="tel"
+                                id="phone"
+                                v-model="orderForm.phone"
+                                placeholder="+7 (999) 999-99-99"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email"></label>
+                            <input
+                                type="email"
+                                id="email"
+                                v-model="orderForm.email"
+                                placeholder="your@email.com"
+                            >
+                        </div>
+
+                        <div class="form-group checkbox">
+                            <input
+                                type="checkbox"
+                                id="privacy"
+                                v-model="orderForm.agreedToPrivacy"
+                            >
+                            <label for="privacy">
+                                Я согласен с <a style="text-decoration: underline " href="/privacy-policy" target="_blank">политикой конфиденциальности</a>
+                            </label>
+                        </div>
+
+                        <div class="cart-total">
+                            Общая сумма: {{ cartStore.totalPrice }} Р
+<!--                            <div v-if="hasPrinting" class="printing-total">
+                                (включая нанесение: {{ printingTotal }} ₽)
+                            </div>-->
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary submit-btn btn__red"
+                        >
+                            Оформить заказ
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
     </header>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { ref, computed, watch, onMounted, reactive} from 'vue'
+import { Link, router } from '@inertiajs/vue3'
 import axios from 'axios'
+import { useCartStore } from '@/store/cart'
+
+
+
+
+const cartStore = useCartStore()
+// Данные формы заказа
+const orderForm = reactive({
+    name: '',
+    phone: '',
+    email: '',
+    agreedToPrivacy: false
+})
+
+// Отправка заказа
+const errorMessage = ref('')
+const successMessage = ref('');
+
+// Обновите метод submitOrder
+async function submitOrder() {
+    console.log('Начало отправки заказа');
+
+    // Сброс предыдущей ошибки
+    errorMessage.value = ''
+
+    if (!orderForm.name) {
+        errorMessage.value = 'Введите имя'
+        return;
+    }
+
+    if (!orderForm.phone) {
+        errorMessage.value = 'Введите телефон'
+        return;
+    }
+
+    if (!orderForm.email) {
+        errorMessage.value = 'Введите email'
+        return;
+    }
+
+
+    if (!orderForm.agreedToPrivacy) {
+        console.log('Нет согласия с политикой');
+        errorMessage.value = 'Необходимо согласие с политикой конфиденциальности'
+        return;
+    }
+
+    // Проверка заполнения обязательных полей
+    if (!orderForm.name || !orderForm.phone || !orderForm.email) {
+        errorMessage.value = 'Заполните все обязательные поля'
+        return;
+    }
+
+    const orderData = {
+        name: orderForm.name,
+        phone: orderForm.phone,
+        email: orderForm.email,
+        agreed_to_privacy: orderForm.agreedToPrivacy,
+        items: cartStore.items.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            with_printing: item.withPrinting,
+            printing_cost: item.withPrinting ? cartStore.printingCost : 0,
+            color: item.color,
+            size: item.size,
+            quantity: item.quantity,
+            article: item.article,
+            image: item.image
+        })),
+        total_price: cartStore.totalPrice
+    }
+
+    try {
+        const result = await cartStore.submitOrder(orderData)
+
+        if (result.success) {
+            // Показываем сообщение об успехе
+            successMessage.value = result.message;
+
+            // Ждем 2 секунды перед закрытием корзины, чтобы пользователь увидел сообщение
+            setTimeout(() => {
+                // Сброс формы
+                Object.assign(orderForm, {
+                    name: '',
+                    phone: '',
+                    email: '',
+                    agreedToPrivacy: false
+                });
+
+                // Закрытие корзины после успешного заказа
+                cartStore.closeCart();
+
+                // Очищаем сообщение об успехе
+                successMessage.value = '';
+            }, 2000);
+        }
+
+        else {
+            errorMessage.value = result.message
+        }
+    } catch (error) {
+        errorMessage.value = 'Произошла ошибка при отправке заказа'
+        console.error('Ошибка при отправке заказа:', error)
+    }
+}
 
 // Определяем props
 const props = defineProps({
@@ -371,6 +619,15 @@ const searchProducts = async () => {
     }
 }
 
+// Функция для перехода на страницу поиска (использует Inertia)
+const goToSearchPage = () => {
+    if (searchQuery.value.trim()) {
+        router.get(route('client.products.search-page'), {
+            query: searchQuery.value.trim()
+        })
+    }
+}
+
 const hideSearchResults = () => {
     setTimeout(() => {
         showSearchResults.value = false
@@ -398,14 +655,14 @@ const openDrawingMenu = async () => {
         console.error('Failed to fetch drawings', error)
         // В случае ошибки используем статичный список
         localDrawings.value = [
-            { id: 1, url: 'tampopechat', title: 'Тампопечать' },
+            /*{ id: 1, url: 'tampopechat', title: 'Тампопечать' },
             { id: 2, url: 'tisnenie', title: 'Тиснение' },
             { id: 3, url: 'gravirovka', title: 'Гравировка' },
             { id: 4, url: 'shelkografiya', title: 'Шелкография' },
             { id: 5, url: 'dekol', title: 'Деколь' },
             { id: 6, url: 'cifrovaya-pechat', title: 'Цифровая печать' },
             { id: 7, url: 'vyshivka', title: 'Вышивка' },
-            { id: 8, url: 'uf-pechat', title: 'УФ печать' }
+            { id: 8, url: 'uf-pechat', title: 'УФ печать' }*/
         ]
         showDrawingDropdown.value = true
     }
@@ -420,6 +677,32 @@ const closeDrawingMenu = () => {
 onMounted(() => {
     // Инициализация компонента после монтирования
 })
+
+
+//метод для установки нанесения
+function setPrinting(index, withPrinting) {
+    if (cartStore.items[index].withPrinting === withPrinting) return;
+    cartStore.togglePrinting(index);
+}
+
+//метод для расчета цены товара
+function itemPrice(item) {
+    return item.price + (item.withPrinting ? cartStore.printingCost : 0);
+}
+
+//вычисляемые свойства для отображения информации о нанесении
+const hasPrinting = computed(() => {
+    return cartStore.items.some(item => item.withPrinting);
+});
+
+const printingTotal = computed(() => {
+    return cartStore.items.reduce((total, item) => {
+        return total + (item.withPrinting ? cartStore.printingCost * item.quantity : 0);
+    }, 0);
+});
+
+
+
 </script>
 
 <style>
@@ -455,5 +738,300 @@ onMounted(() => {
     color: #e53935;
 }
 
-/* Остальные стили остаются без изменений */
+
+
+/* Стили для корзины */
+.cart-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: flex-end;
+    z-index: 10000;
+
+}
+
+.cart-popup {
+    width: 400px;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    overflow-y:  auto;
+}
+
+.cart-popup-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-cart {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.cart-popup-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+}
+
+.cart-item {
+    display: flex;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    margin-right: 15px;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-details h4 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+}
+
+.cart-item-details p {
+    margin: 0 0 3px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.cart-item-price {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.cart-item-controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-controls button {
+    width: 25px;
+    height: 25px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.quantity-controls span {
+    margin: 0 10px;
+}
+
+.remove-item {
+    background: none;
+    border: none;
+    color: #e53935;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.cart-popup-footer {
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+.cart-total {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.header__top__img {
+    position: relative;
+    cursor: pointer;
+}
+
+#cart_qty {
+    position: absolute;
+    top: -8px;
+    right: -5px;
+    background-color: #e53935;
+    color: white;
+    border-radius: 50%;
+    width: 17px;
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+.header__top span{
+    padding: 0 3px 0 0!important;
+}
+
+/* Стили для формы */
+.order-form {
+    padding: 0px 0;
+}
+
+.form-group {
+    margin-bottom: 7px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group.checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.form-group.checkbox input {
+    margin-right: 10px;
+}
+
+.form-group.checkbox label {
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border-left: 4px solid #c62828;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.error-close {
+    background: none;
+    border: none;
+    color: #c62828;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border-left: 4px solid #2e7d32;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+/*********************************/
+.printing-option {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+}
+
+.printing-label {
+    font-weight: bold;
+    margin-right: 10px;
+    min-width: 80px;
+}
+
+.printing-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.printing-btn {
+    padding: 0px 1px;
+    border: 1px solid #ddd;
+    background: #f5f5f5;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-size: 10px;
+}
+
+.printing-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+.printing-btn:hover {
+    background: #e0e0e0;
+}
+
+.printing-btn.active:hover {
+    background: #2980b9;
+}
+
+.printing-total {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+}
+.form-group checkbox{
+    cursor: pointer;
+}
+
 </style>

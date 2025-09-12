@@ -109,8 +109,20 @@
                                     </div>
 
                                     <div class="custom-checkbox-container" id="customCheckboxContainer">
-                                        <label for="customCheckbox" class="custom-checkbox-label">без нанесения</label>
-                                        <input type="checkbox" class="custom-checkbox" id="customCheckbox">
+                                        <label
+                                            for="customCheckbox"
+                                            :class="{ 'custom-checkbox-label': true, 'active': withPrinting }"
+                                        >
+                                            {{ withPrinting ? 'С нанесением' : 'Без нанесения' }}
+                                            <span v-if="withPrinting">(+ {{ printingCost }} ₽)</span>
+                                        </label>
+                                        <input
+                                            type="checkbox"
+                                            class="custom-checkbox"
+                                            id="customCheckbox"
+                                            v-model="withPrinting"
+
+                                        >
                                     </div>
 
                                     <div class="product-price">{{ currentProduct.price }} ₽</div>
@@ -149,11 +161,12 @@
                                     {{ variantGroup.total > 0 ? variantGroup.total + ' шт' : 'по запросу' }}
                                 </div>
                                 <div>
-                                    <input type="number"
+                                    <input type="text"
                                            min="0"
-                                           :max="variantGroup.total"
+
                                            class="quantity-input"
-                                           v-model="variantGroup.quantity">
+                                           :value="getQuantity(variantGroup)"
+                                           @input="setQuantity(variantGroup, $event.target.value)">
                                 </div>
                                 <div>{{ variantGroup.size }}</div>
                                 <div>{{ variantGroup.price }} ₽</div>
@@ -168,7 +181,9 @@
                                     </div>
                                 </div>
                                 <div class="total-section__button">
-                                    <button class="btn btn-primary submit-btn btn__red">ЗАПРОСИТЬ</button>
+                                    <a class="btn btn-primary submit-btn btn__red" @click="addToCart">
+                                        ЗАПРОСИТЬ
+                                    </a>
                                 </div>
                             </div>
 
@@ -177,7 +192,9 @@
                             </div>
                         </div>
 
-                        <button class="order-btn">Заказ принимается на сумму от 5000 Руб..</button>
+                        <button class="order-btn">
+                            Заказ принимается на сумму от 5000 Руб..
+                        </button>
 
                         <div class="tabs-container">
                             <div class="tab-buttons">
@@ -251,6 +268,8 @@
                                     <div>{{ tabData.delivery.cost }}</div>
                                 </div>
                             </div>
+
+
                         </div>
 
                     </div>
@@ -268,6 +287,16 @@
 import { ref, computed, onMounted } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import Header from "@/Components/Client/Header.vue";
+import { useCartStore } from '@/store/cart'
+
+const cartStore = useCartStore()
+const withPrinting = ref(false)
+const printingCost = cartStore.printingCost
+
+function togglePrinting() {
+
+    withPrinting.value = !withPrinting.value
+}
 
 
 // Инициализация при загрузке компонента
@@ -285,8 +314,11 @@ const props = defineProps({
         required: true
     },
     categories: Array,        // Все категории для меню
-    subcategories: Array,     // Подкатегории
+    subcategories: Array,      // Подкатегории
+
 });
+
+
 
 const currentImage = ref(getProductImage(props.product));
 const activeVariant = ref(null);
@@ -297,6 +329,7 @@ const activeTab = ref('description'); // По умолчанию активна 
 
 // Метод для переключения вкладок
 const switchTab = (tabName) => {
+    console.log('Switching to tab:', tabName);
     activeTab.value = tabName;
 };
 
@@ -320,8 +353,6 @@ const tabData = computed(() => {
         }
     };
 });
-
-
 
 // Группируем варианты по цвету и размеру
 const variantsGrouped = computed(() => {
@@ -349,8 +380,6 @@ const variantsGrouped = computed(() => {
 
     return grouped;
 });
-
-
 
 // Вычисляемые свойства
 const currentProduct = computed(() => activeVariant.value || props.product);
@@ -433,7 +462,6 @@ const currentAdditionalImages = computed(() => {
     return additionalImages;
 });
 
-
 const imageErrors = ref([]);
 
 // Проверяем, есть ли вообще дополнительные изображения
@@ -453,8 +481,6 @@ function handleImageError(index) {
         imageErrors.value.push(imgUrl);
     }
 }
-
-
 
 // Методы
 function getVariantStock(variant) {
@@ -521,16 +547,60 @@ function prepareVariantData(variant) {
     };
 }
 
+const quantities = ref({});
+
 function calculateTotal() {
     let total = 0;
     if (variantsForSelectedColor.value) {
         variantsForSelectedColor.value.forEach(variantGroup => {
-            const quantity = variantGroup.quantity || 0;
+            const key = `${variantGroup.color}_${variantGroup.size}`;
+            const quantity = quantities.value[key] || 0;
             total += quantity * variantGroup.price;
         });
     }
     return total.toLocaleString('ru-RU');
 }
+
+function getQuantity(variantGroup) {
+    const key = `${variantGroup.color}_${variantGroup.size}`;
+    return quantities.value[key] || 0;
+}
+
+function setQuantity(variantGroup, value) {
+    const key = `${variantGroup.color}_${variantGroup.size}`;
+    quantities.value[key] = Number(value);
+}
+
+
+
+function addToCart() {
+    // Для каждого варианта в выбранном цвете, который имеет количество больше 0, добавляем в корзину
+    variantsForSelectedColor.value.forEach(variantGroup => {
+        const quantity = getQuantity(variantGroup)
+        if (quantity > 0) {
+            alert(withPrinting.value)
+            cartStore.addItem(
+                {
+                    id: `${props.product.id}_${variantGroup.color}_${variantGroup.size}`,
+                    title: getShortProductName(currentProduct.value),
+                    price: variantGroup.price,
+                    article: currentArticle.value
+                },
+                variantGroup.color,
+                variantGroup.size,
+                quantity,
+                currentImage.value,
+                withPrinting.value // передаем состояние нанесения
+            )
+        }
+    })
+
+    // Открываем корзину после добавления
+    cartStore.openCart()
+}
+
+
+
 
 
 </script>
@@ -556,7 +626,7 @@ function calculateTotal() {
 /* Стили для вертикальных миниатюр */
 .vertical-thumbnails {
     display: flex;
-    /*flex-direction: column;*/
+    flex-direction: row!important;
     gap: 10px;
 }
 
@@ -894,12 +964,15 @@ function calculateTotal() {
 }
 
 .tab-content {
-    display: none;
+    display: block;
+}
+
+.tab-content {
     padding: 15px 0;
 }
 
-.tab-content[v-show] {
-    display: block;
+.tab-content[v-show="true"] {
+    display: block !important;
 }
 
 .property-item >>> p {
@@ -928,6 +1001,42 @@ function calculateTotal() {
     visibility: visible;
 }
 
+/*************************************/
+.custom-checkbox-container {
+    margin: 15px 0;
+}
 
+.custom-checkbox-label {
+   /* display: inline-block;
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;*/
+}
+
+.custom-checkbox-label.active {
+    /*border-color: #3498db;
+    background-color: #3498db;
+    color: white;*/
+}
+
+.custom-checkbox-label:hover {
+    /*border-color: #3498db;*/
+}
+
+input[type=checkbox] {
+    display: block!important;
+}
+.custom-checkbox-container{
+    max-width: 210px;
+}
+[type='checkbox'], [type='radio'] {
+    /*color: black;*/
+}
+#privacy{
+    display: none!important;
+}
 
 </style>

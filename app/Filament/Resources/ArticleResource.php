@@ -22,9 +22,17 @@ class ArticleResource extends Resource
 
     protected static ?string $navigationLabel = 'Статьи';
 
-    protected static ?string $navigationGroup = 'Контент';
+    protected  static ?string $navigationGroup = 'Контент';
+
+    protected static ?string $pluralModelLabel = 'Статьи';
+
 
     protected static ?int $navigationSort = 3;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {
@@ -140,7 +148,6 @@ class ArticleResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

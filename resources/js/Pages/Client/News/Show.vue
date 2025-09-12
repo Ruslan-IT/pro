@@ -73,7 +73,7 @@ const formatDate = (dateString) => {
 .news-detail {
    /* max-width: 800px;
     margin: 0 auto;*/
-    padding: 2rem;
+   /* padding: 2rem;*/
 }
 
 .container {
@@ -93,7 +93,7 @@ const formatDate = (dateString) => {
 
 .news-article {
     background: white;
-    padding: 2rem;
+    /*padding: 2rem;*/
     border-radius: 8px;
 
     /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/

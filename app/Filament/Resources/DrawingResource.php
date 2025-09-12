@@ -20,13 +20,34 @@ class DrawingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static ?string $navigationGroup = 'Контент';
-
     protected static ?string $navigationLabel = 'Виды нанесения';
 
     protected static ?string $modelLabel = 'вид нанесения';
 
     protected static ?string $pluralModelLabel = 'Виды нанесения';
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationGroup = 'Контент';
+
+
+
+
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Виды нанесения можно добавлять';
+    }
+
+
+
+
 
     public static function form(Form $form): Form
     {
@@ -95,11 +116,7 @@ class DrawingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
-                    ->label('Изображение')
-                    ->disk('public')
-                    ->width(80)
-                    ->height(80),
+
 
                 Tables\Columns\TextColumn::make('title')
                     ->label('Название')

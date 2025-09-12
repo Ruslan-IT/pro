@@ -17,14 +17,14 @@
                         <meta name="description" :content="seo_description">
                     </Head>
 
-                    <h1>{{ seo_h1 }}</h1>
+                    <h1 class="text-center mb-5 mt-5">{{ seo_h1 }}</h1>
 
                     <div class="contact-info">
                         <div class="contact-item">
-                            <strong>Телефон:</strong> {{ page.phone }}
+                            <strong >Телефон:</strong> {{ page.phone }}
                         </div>
                         <div class="contact-item">
-                            <strong>Email:</strong> <a :href="`mailto:${page.email}`">{{ page.email }}</a>
+                            <strong >Email:</strong> <a :href="`mailto:${page.email}`">{{ page.email }}</a>
                         </div>
                         <div class="contact-item" v-if="page.address">
                             <strong>Адрес:</strong> {{ page.address }}
@@ -86,6 +86,7 @@ export default {
 .contact-item {
     margin-bottom: 15px;
     font-size: 16px;
+    display: flex;
 }
 
 .company-details h2 {
@@ -98,9 +99,13 @@ export default {
     display: inline-block;
     min-width: 150px;
     color: #333;
+    text-align: left;
 }
 .contact-page{
-    text-align: left;
+
+}
+.contact-item strong[data-v-f36ea3c8] {
+    min-width: 180px;
 }
 
 </style>

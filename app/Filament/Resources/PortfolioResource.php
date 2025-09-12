@@ -24,8 +24,17 @@ class PortfolioResource extends Resource
     protected static ?string $navigationLabel = 'Портфолио';
 
     protected static ?string $navigationGroup = 'Контент';
+    protected static ?string $pluralModelLabel = 'Портфолио';
 
-    protected static ?int $navigationSort = 2;
+
+
+
+    protected static ?int $navigationSort = 3;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {
@@ -105,13 +114,15 @@ class PortfolioResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
-                    ->label('Изображение')
-                    ->size(50),
-                Tables\Columns\TextColumn::make('title')
-                    ->label('Заголовок')
+
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
                     ->searchable()
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Заголовок')
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('published_at')
                     ->label('Дата публикации')
@@ -133,7 +144,6 @@ class PortfolioResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -1,7 +1,7 @@
 <template>
   <section class="">
     <header>
-
+        Market Panel
     </header>
   </section>
 

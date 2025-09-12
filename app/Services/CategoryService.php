@@ -26,8 +26,6 @@ class CategoryService
         //$categoryChildren = $category_all->where('id_parent', $category->id);
         $categoryChildren = $category_all->where('id_parent', $category->id);
 
-        //dd($categoryChildren);
-
         foreach ($categoryChildren as $categoryChild) {
             $arr = array_merge($arr, self::getCategoryChildren($categoryChild, $category_all));
         }
@@ -35,7 +33,6 @@ class CategoryService
         $arr[] = $category;
         return $arr;
     }
-
 
     public static function getCategoryChildren2(Category $category): array
     {
@@ -102,8 +99,6 @@ class CategoryService
 
         return $resultAll;
     }
-
-
 
     public static function getCategoryParents(Category $category): array
     {
@@ -192,12 +187,6 @@ class CategoryService
             return $title_group; // название группы
         })
             ->map(function ($productGroup) {
-                //dd($productGroup);
-
-                /*foreach ($productGroup as $product) {
-                    echo $product->title . '<br>';
-                }
-                exit();*/
 
                 $mainProduct = $productGroup->first();
 
@@ -406,8 +395,6 @@ class CategoryService
         $groupedProducts = [];
 
         foreach ($get as $product) {
-
-
 
             $groupKey = CategoryService::generateGroupKey($product->title);
 

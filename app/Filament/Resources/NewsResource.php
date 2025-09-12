@@ -20,7 +20,18 @@ class NewsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
     protected static ?string $navigationLabel = 'Новости';
+
+    protected static ?string $pluralModelLabel = 'Новости';
+
     protected static ?string $navigationGroup = 'Контент';
+
+    protected static ?int $navigationSort = 3;
+
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {
@@ -85,14 +96,16 @@ class NewsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
-                    ->label('Изображение')
-                    ->size(50),
+
+                Tables\Columns\TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(50),
 
                 Tables\Columns\TextColumn::make('title')
                     ->label('Заголовок')
                     ->searchable()
-                    ->sortable()
                     ->limit(50),
 
                 Tables\Columns\TextColumn::make('published_at')

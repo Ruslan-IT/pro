@@ -135,7 +135,7 @@ const formatDate = (dateString) => {
     color: white;
     text-decoration: none;
     padding: 10px 20px;
-    background: #007bff;
+    background: #ff1818;
     border-radius: 4px;
     font-weight: 500;
 }
@@ -207,5 +207,8 @@ const formatDate = (dateString) => {
 .pagination-link.disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+.view-project:hover{
+    color: #000000;
 }
 </style>

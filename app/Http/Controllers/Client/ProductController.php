@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -25,22 +26,6 @@ class ProductController extends Controller
 
     }
 
-    public function search(Request $request)
-    {
-
-        $query = $request->input('query');
-
-        if (empty($query)) {
-            return response()->json([]);
-        }
-
-        $products = Product::where('title', 'like', "%{$query}%")
-            ->orWhere('article', 'like', "%{$query}%")
-            ->limit(10)
-            ->get(['id', 'title', 'article', 'url', 'price']);
-
-        return response()->json($products);
-    }
 
     public function show(Category $catalogs, Product $product)
     {

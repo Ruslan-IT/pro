@@ -26,12 +26,14 @@ class CategoryResource extends Resource
 
     protected static ?string $label = 'Категория';
     protected static ?string $pluralLabel = 'Категории';
-
     protected static ?string $navigationLabel = 'Категории';
 
-    protected static ?string $navigationGroup = 'Список категорий';
+    protected static ?int $navigationSort = 2;
 
-
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
 
     public static function form(Form $form): Form
@@ -104,11 +106,11 @@ class CategoryResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->label('Назваие')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('url')
                     ->numeric(),
-
                 Tables\Columns\TextColumn::make('id_parent')
                     ->numeric()
 
@@ -119,6 +121,7 @@ class CategoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

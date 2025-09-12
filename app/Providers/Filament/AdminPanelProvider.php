@@ -2,7 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\ArticleResource;
+use App\Filament\Resources\DrawingResource;
 use App\Filament\Resources\NewsResource;
+use App\Filament\Resources\PortfolioResource;
+use App\Filament\Resources\UserResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -36,28 +40,46 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('40px')
 
             ->navigationGroups([
-                NavigationGroup::make('Товары')
+                NavigationGroup::make('Контент')
                     ->collapsed(),
-                NavigationGroup::make('Список категорий')
+            ])
+             ->navigationGroups([
+                NavigationGroup::make('Страницы')
                     ->collapsed(),
             ])
 
-            ->navigationItems([
-                NavigationItem::make('Новости')
-                    ->url(fn (): string => NewsResource::getUrl('index')) // Исправленный вызов
-                    ->icon('heroicon-o-newspaper')
-                    ->group('Контент') // Добавьте новость в группу Контент
-                    ->sort(2),
+             ->navigationGroups([
+                NavigationGroup::make('Настройки')
+                    ->collapsed(),
             ])
 
 
 
-            /*->navigationItems([
-                NavigationItem::make('Google')
-                ->url('https://google.com')
-                ->icon('heroicon-o-arrow-down-circle')
-                ->group('Ссылки')
-            ])*/
+
+                ->navigationItems([
+                    NavigationItem::make('Статьи')
+                        ->url(fn (): string => ArticleResource::getUrl('index'))
+                        ->group('Контент')
+                ])
+
+                ->navigationItems([
+                    NavigationItem::make('Новости')
+                        ->url(fn (): string => NewsResource::getUrl('index'))
+                        ->group('Контент')
+                ])
+
+                ->navigationItems([
+                    NavigationItem::make('Портфолио')
+                        ->url(fn (): string => PortfolioResource::getUrl('index'))
+                        ->group('Контент')
+                ])
+
+                ->navigationItems([
+                    NavigationItem::make('Виды нанесения')
+                        ->url(fn (): string => DrawingResource::getUrl('index'))
+                        ->group('Контент')
+                ])
+
             ->colors([
                 'primary' => Color::Rose
             ])

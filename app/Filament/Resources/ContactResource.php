@@ -112,9 +112,6 @@ class ContactResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
-                    ->label('Изображение')
-                    ->disk('public'),
 
                 Tables\Columns\TextColumn::make('phone')
                     ->label('Телефон')

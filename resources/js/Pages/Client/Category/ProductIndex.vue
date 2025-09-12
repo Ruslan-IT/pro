@@ -223,6 +223,22 @@
 
                         </div>
 
+                        <div class="pagination-container mt-4" v-if="pagination && pagination.links">
+                            <div class="pagination">
+                                <template v-for="(link, index) in pagination.links" :key="index">
+                                    <a
+                                        v-if="link.url"
+                                        :href="link.url"
+                                        v-html="link.label"
+                                        :class="{ 'active': link.active }"
+                                        class="pagination-link"
+                                        @click.prevent="handlePagination(link.url)"
+                                    ></a>
+                                    <span v-else v-html="link.label" class="pagination-disabled"></span>
+                                </template>
+                            </div>
+                        </div>
+
 
                     </div>
                 </div>
@@ -240,7 +256,7 @@ import ProductItem from "@/Components/Client/Product/Productitem.vue"
 
 import Header from "@/Components/Client/Header.vue" // Импортируем компонент Header
 
-import { Link } from "@inertiajs/vue3"
+import { Link, router  } from "@inertiajs/vue3"
 import noUiSlider from 'nouislider'
 import 'nouislider/dist/nouislider.css'
 
@@ -253,7 +269,8 @@ const props = defineProps({
     categories: Array,        // Все категории для меню
     params: Object,           // Параметры фильтрации
     total_count: Number,      // Общее количество товаров
-    drawings: Array
+    drawings: Array,
+    pagination: Object,
 })
 
 // Реактивные состояния
@@ -380,10 +397,55 @@ onMounted(() => {
 })
 
 
+
+// Обработчик пагинации
+const handlePagination = (url) => {
+    window.location.href = url;
+}
+
+
 </script>
 
 <style>
+/* Стили для пагинации */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
 
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination-link,
+.pagination-disabled {
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.pagination-link:hover {
+    background-color: #f5f5f5;
+}
+
+.pagination-link.active {
+    background-color: #ee2a27;
+    color: white;
+    border-color: #ee2a27;
+}
+
+.pagination-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 
 .catalog_drop {
     position: absolute;

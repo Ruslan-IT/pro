@@ -16,7 +16,7 @@
                         <meta name="description" :content="seo_description">
                     </Head>
 
-                    <h1>{{ seo_h1 }}</h1>
+                    <h1 class="mt-5 mb-5">{{ seo_h1 }}</h1>
 
                     <div class="content-section">
                         <h2>Оплата</h2>
@@ -79,4 +79,11 @@ export default {
 .delivery-content p {
     margin-bottom: 15px;
 }
+
+
+.payment-content, .content-section {
+    text-align: left;
+}
+
+
 </style>

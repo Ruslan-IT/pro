@@ -27,6 +27,9 @@ class PaymentDeliveryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Оплата и доставка';
 
+
+
+
     public static function form(Form $form): Form
     {
         return $form

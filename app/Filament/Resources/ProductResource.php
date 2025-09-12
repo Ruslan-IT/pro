@@ -22,7 +22,11 @@ class ProductResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     protected static ?string $navigationLabel = 'Товары';
-    protected static ?string $navigationGroup = 'Товары';
+
+
+    protected static ?string $label = 'Товары';
+
+    protected static ?int $navigationSort = 1;
 
 
 
@@ -88,28 +92,26 @@ class ProductResource extends Resource
     public static function table(Table $table): Table
     {
 
-
         $table->columns([
-
                 Tables\Columns\TextColumn::make('id')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tovar_id')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('article')
+                    ->label('Артикул')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('title_original')
+                    ->label('Название')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
+                    ->label('Цена')
                     ->money()
-
-
             ])
 
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
