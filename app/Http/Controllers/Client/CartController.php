@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderCreatedMail;
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -15,7 +17,6 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->all());
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -30,12 +31,12 @@ class CartController extends Controller
         $validated['status'] = Cart::STATUS_NEW;
         $validated['is_paid'] = false;
 
-
         // Сохраняем заказ в базу данных
         $cart = Cart::create($validated);
 
+        Mail::to('admin@ru-landing.ru')->send(new OrderCreatedMail($cart));
+
         // Очищаем корзину после успешного сохранения
-        //
 
         return response()->json([
             'success' => true,
