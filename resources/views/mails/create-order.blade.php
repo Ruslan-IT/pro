@@ -16,10 +16,14 @@
             <th>Номер </th>
             <th>Наименование  </th>
             <th>Стоимость  </th>
+            <th>Email  </th>
         </tr>
 
         @foreach($cart as $carts)
-            <tr></tr>
+            <tr>
+                <td>{{ $carts->id }}</td>
+                <td>{{ $carts->name }}</td>
+                <td>{{ $carts->email }}</td>
             </tr
 
         @endforeach
