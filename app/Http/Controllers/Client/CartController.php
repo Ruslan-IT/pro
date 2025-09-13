@@ -34,6 +34,8 @@ class CartController extends Controller
         // Сохраняем заказ в базу данных
         $cart = Cart::create($validated);
 
+        //dd($cart['name']);
+
         Mail::to('admin@ru-landing.ru')->send(new OrderCreatedMail($cart));
 
         // Очищаем корзину после успешного сохранения
