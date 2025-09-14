@@ -83,8 +83,9 @@
                 @endif
             </td>
             <td>{{ $item['quantity'] }}</td>
-            <td>{{ number_format($pricePerUnit, 2, '.', ' ') }} ₽</td>
-            <td>{{ number_format($item['price'], 2, '.', ' ') }} ₽</td>
+            <td>{{ $item['price']  }} ₽</td>
+            <td>{{ $item['price'] * $item['quantity']  }} ₽</td>
+
         </tr>
     @endforeach
 </table>
