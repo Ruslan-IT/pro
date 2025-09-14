@@ -28,6 +28,12 @@
             background-color: #4CAF50;
             color: white;
         }
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -43,6 +49,7 @@
 <h2>Состав заказа:</h2>
 <table>
     <tr>
+        <th>Изображение</th>
         <th>Название</th>
         <th>Артикул</th>
         <th>Цвет</th>
@@ -57,6 +64,13 @@
             $pricePerUnit = $item['quantity'] > 0 ? $item['price'] / $item['quantity'] : $item['price'];
         @endphp
         <tr>
+            <td>
+                @if(!empty($item['image']))
+                    <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="product-image">
+                @else
+                    <span>Нет изображения</span>
+                @endif
+            </td>
             <td>{{ $item['title'] }}</td>
             <td>{{ $item['article'] }}</td>
             <td>{{ $item['color'] }}</td>
