@@ -27,14 +27,38 @@ class CartController extends Controller
             'agreed_to_privacy' => 'required|accepted'
         ]);
 
+        // Если items пришел как JSON-строка, декодируем его
+        if (is_string($validated['items'])) {
+            $validated['items'] = json_decode($validated['items'], true);
+        }
+
+        // Обрабатываем items для добавления информации о нанесении
+        $processedItems = [];
+        foreach ($validated['items'] as $item) {
+            $processedItem = [
+                'title' => $item['title'] ?? 'Без названия',
+                'quantity' => $item['quantity'] ?? 1,
+                'price' => $item['price'] ?? 0,
+                'article' => $item['article'] ?? '',
+                'color' => $item['color'] ?? '',
+                'size' => $item['size'] ?? '',
+                'with_printing' => $item['with_printing'] ?? false,
+                'printing_cost' => $item['printing_cost'] ?? 0,
+                'image' => $item['image'] ?? ''
+            ];
+            $processedItems[] = $processedItem;
+        }
+
         // Добавляем статус по умолчанию
+        $validated['items'] = $processedItems;
         $validated['status'] = Cart::STATUS_NEW;
         $validated['is_paid'] = false;
 
         // Сохраняем заказ в базу данных
         $cart = Cart::create($validated);
 
-        //dd($cart['name']);
+
+        dd($validated);
 
         Mail::to('admin@ru-landing.ru')->send(new OrderCreatedMail($cart));
 

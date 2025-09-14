@@ -9,23 +9,41 @@
 </head>
 <body>
 
-    <h1>Заказ</h1>
+<h1>Заказ</h1>
 
-    <table>
+<table>
+    <tr>
+        <th>Имя</th>
+        <th>Телефон</th>
+        <th>Email</th>
+    </tr>
+
+    <tr>
+        <td>Имя -</td>
+        <td> {{  $cart['name'] }}</td>
+    <tr>
+    <tr>
+        <td>Телефон -</td>
+        <td> {{  $cart['phone'] }}</td>
+    <tr>
+    <tr>
+        <td>Email -</td>
+        <td> {{  $cart['email'] }}</td>
+    <tr>
+
+     @foreach($cart as $carts):
+
         <tr>
-            <th>Номер </th>
-            <th>Наименование  </th>
-            <th>Стоимость  </th>
-        </tr>
-
-
+            <td> {{  $carts['title'] }} -</td>
+            <td> {{  $carts['quantity'] }}</td>
+            <td> {{  $carts['color'] }}</td>
+            <td> {{  $carts['price'] }}</td>
         <tr>
-            <td>{{  $cart['name'] }}</td>
-        </tr>
+
+     @endforeach;
 
 
-
-    </table>
+</table>
 
 </body>
 </html>

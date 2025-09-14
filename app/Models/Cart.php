@@ -44,4 +44,19 @@ class Cart extends Model
             self::STATUS_CANCELLED => 'Отменен',
         ];
     }
+
+    // Аксессор для автоматического преобразования JSON в массив
+    public function getItemsAttribute($value)
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        // Если это JSON-строка, декодируем ее
+        if (is_string($value)) {
+            return json_decode($value, true) ?? [];
+        }
+
+        return [];
+    }
 }
