@@ -246,6 +246,8 @@
 
         </main>
 
+        <Footer/>
+
     </div>
 </template>
 
@@ -255,6 +257,7 @@ import MainLayout from '@/Layouts/MainLayout.vue'
 import ProductItem from "@/Components/Client/Product/Productitem.vue"
 
 import Header from "@/Components/Client/Header.vue" // Импортируем компонент Header
+import Footer from "@/Components/Footer.vue"
 
 import { Link, router  } from "@inertiajs/vue3"
 import noUiSlider from 'nouislider'

@@ -39,6 +39,8 @@
 
         </div>
 
+        <Footer />
+
     </div>
 
 </template>
@@ -48,6 +50,7 @@
 import { Link } from '@inertiajs/vue3';
 import { defineProps } from 'vue';
 import Header from "@/Components/Client/Header.vue";
+import Footer from "@/Components/Footer.vue"
 
 defineProps({
     newsItem: Object,

@@ -541,7 +541,7 @@ opacity: 1; /* Firefox по умолчанию уменьшает opacity */
 }
 
 .header__top__img{
-    padding: 0 10px 0 0;
+    padding: 0 20px 0 0;
 }
 
 .header__top__img img{

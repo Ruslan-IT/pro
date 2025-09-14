@@ -26,6 +26,8 @@
                     По вашему запросу "{{ query }}" ничего не найдено.
                 </div>
             </div>
+
+            <Footer />
         </div>
     </div>
 </template>
@@ -35,6 +37,8 @@ import { Head } from '@inertiajs/vue3';
 import { defineProps } from 'vue';
 import Header from "@/Components/Client/Header.vue";
 import ProductItem from "@/Components/Client/Product/Productitem.vue";
+import Footer from "@/Components/Footer.vue"
+
 
 defineProps({
     articles: Object,

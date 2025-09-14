@@ -43,19 +43,24 @@
                 </div>
             </div>
         </div>
+
+
     </div>
 
             </div>
         </div>
     </div>
+    <Footer/>
 </template>
 
 <script>
 import { Head, Link } from '@inertiajs/vue3';
 import Header from "@/Components/Client/Header.vue";
+import Footer from "@/Components/Footer.vue";
 
 export default {
     components: {
+        Footer,
         Header,
         Head,
         Link

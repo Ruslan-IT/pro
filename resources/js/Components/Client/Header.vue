@@ -28,7 +28,7 @@
                                     </div>
                                     <div class="header__top__info">
                                         <p class="min__order">Минимальный заказ</p>
-                                        <p class="rub">15 0007 Р</p>
+                                        <p class="rub">15 000 Р</p>
                                     </div>
                                 </div>
                             </div>
@@ -108,6 +108,52 @@
                         <span></span>
                     </div>
                 </div>
+
+                <!-- Это будет общий блок, видимый только на мобилке -->
+                <div class="nav-item catalog mobile-only" @click="toggleMobileCatalog">
+                    <a class="nav-link" href="#">КАТАЛОГ</a>
+                    <span></span>
+                </div>
+
+                <!-- Мобильное меню каталога -->
+                <div v-if="showMobileCatalog" class="mobile-catalog-menu">
+                    <button class="close-btn" @click="toggleMobileCatalog">Закрыть</button>
+
+                    <ul class="mobile-catalog-list">
+                        <li v-for="category in categories" :key="category.id">
+                            <!-- Категория -->
+                            <div class="category-title" @click="toggleMobileSubcategory(category.id)">
+                                {{ category.title }}
+                            </div>
+
+                            <!-- Подкатегории -->
+                            <ul v-if="mobileActiveCategory === category.id && category.children?.length">
+                                <li v-for="subcategory in category.children" :key="subcategory.id">
+                                    <!-- теперь это ссылка -->
+                                    <a
+                                        class="subcategory-title"
+                                        :href="`/categories/${subcategory.url}/products`"
+                                        @click.stop="toggleMobileSubSubcategory(subcategory.id)"
+                                    >
+                                        {{ subcategory.title }}
+                                    </a>
+
+                                    <!-- Под-подкатегории -->
+                                    <ul v-if="mobileActiveSubcategory === subcategory.id">
+                                        <li v-for="subsubcategory in getSubSubcategories(subcategory.id)" :key="subsubcategory.id">
+                                            <a :href="`/categories/${subsubcategory.url}/products`">
+                                                {{ subsubcategory.title }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
+
+
             </div>
 
             <!-- Основное меню -->
@@ -174,7 +220,7 @@
 
                                     <!-- Портфолио -->
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/drawing/tampopechat">ПОРТФОЛИО</a>
+                                        <a class="nav-link" href="/portfolio">ПОРТФОЛИО</a>
                                     </li>
 
 
@@ -410,7 +456,6 @@ const successMessage = ref('');
 
 // Обновите метод submitOrder
 async function submitOrder() {
-    console.log('Начало отправки заказа');
 
     // Сброс предыдущей ошибки
     errorMessage.value = ''
@@ -703,7 +748,54 @@ const printingTotal = computed(() => {
 
 
 
+
+
+
+
+
+
+
+
 </script>
+
+
+<script>
+export default {
+    data() {
+        return {
+            showMobileCatalog: false,
+            mobileActiveCategory: null,
+            mobileActiveSubcategory: null,
+        };
+    },
+    methods: {
+        toggleMobileCatalog() {
+            this.showMobileCatalog = !this.showMobileCatalog;
+            this.mobileActiveCategory = null;
+            this.mobileActiveSubcategory = null;
+        },
+        toggleMobileSubcategory(categoryId) {
+            this.mobileActiveCategory =
+                this.mobileActiveCategory === categoryId ? null : categoryId;
+            this.mobileActiveSubcategory = null;
+        },
+        toggleMobileSubSubcategory(subcategoryId) {
+            this.mobileActiveSubcategory =
+                this.mobileActiveSubcategory === subcategoryId ? null : subcategoryId;
+        },
+        getSubSubcategories(subcategoryId) {
+            const category = this.categories.find((cat) =>
+                cat.children?.some((child) => child.id === subcategoryId)
+            );
+            const subcategory = category?.children?.find(
+                (child) => child.id === subcategoryId
+            );
+            return subcategory?.children || [];
+        },
+    },
+};
+</script>
+
 
 <style>
 /* Стили для выпадающего меню нанесения */
@@ -881,7 +973,7 @@ const printingTotal = computed(() => {
 #cart_qty {
     position: absolute;
     top: -8px;
-    right: -5px;
+    right: 2px;
     background-color: #e53935;
     color: white;
     border-radius: 50%;
@@ -1033,5 +1125,102 @@ const printingTotal = computed(() => {
 .form-group checkbox{
     cursor: pointer;
 }
+
+
+/*********************************************/
+/* Скрыть блок по умолчанию, кроме мобилок */
+.mobile-only {
+    display: none;
+}
+
+/* Показать на мобилке */
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+    }
+
+    .mobile-catalog-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: white;
+        z-index: 1000;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .mobile-catalog-menu .close-btn {
+        background: none;
+        border: none;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .mobile-catalog-list li {
+        margin-bottom: 10px;
+    }
+
+    .category-title,
+    .subcategory-title {
+        font-weight: bold;
+        cursor: pointer;
+    }
+    /* Базовый список */
+    .mobile-catalog-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Категории */
+    .mobile-catalog-list > li {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+    }
+
+    /* Заголовок категории */
+    .category-title {
+        font-weight: bold;
+        font-size: 16px;
+        padding: 5px 0;
+    }
+
+    /* Подкатегории */
+    .mobile-catalog-list ul {
+        list-style: none;
+        padding-left: 15px; /* смещение вправо */
+        margin-top: 5px;
+        border-left: 2px solid #eee; /* визуальное выделение вложенности */
+    }
+
+    /* Заголовок подкатегории */
+    .subcategory-title {
+        font-size: 14px;
+        font-weight: 500;
+        padding: 5px 0;
+    }
+
+    /* Под-подкатегории */
+    .mobile-catalog-list ul ul {
+        padding-left: 20px; /* ещё глубже */
+        border-left: 2px dashed #ddd;
+    }
+
+    /* Ссылки */
+    .mobile-catalog-list a {
+        display: block;
+        padding: 5px 0;
+        font-size: 13px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .mobile-catalog-list a:hover {
+        color: #007bff;
+    }
+}
+/*********************************************/
 
 </style>
