@@ -58,7 +58,7 @@ class CartController extends Controller
         $cart = Cart::create($validated);
 
 
-        Mail::to('admin@ru-landing.ru')->send(new OrderCreatedMail($cart));
+        Mail::to($cart['email'])->send(new OrderCreatedMail($cart));
 
         // Очищаем корзину после успешного сохранения
 
