@@ -5,45 +5,77 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Новый заказ</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .printing-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Заказ</h1>
+<h1>Новый заказ #{{ $cart->id }}</h1>
 
+<h2>Информация о клиенте:</h2>
+<p><strong>Имя:</strong> {{ $cart->name }}</p>
+<p><strong>Email:</strong> {{ $cart->email }}</p>
+<p><strong>Телефон:</strong> {{ $cart->phone }}</p>
+<p><strong>Общая сумма:</strong> {{ number_format($cart->total_price, 2, '.', ' ') }} руб.</p>
+
+<h2>Состав заказа:</h2>
 <table>
     <tr>
-        <th>Имя</th>
-        <th>Телефон</th>
-        <th>Email</th>
+        <th>Название</th>
+        <th>Артикул</th>
+        <th>Цвет</th>
+        <th>Размер</th>
+        <th>Нанесение</th>
+        <th>Количество</th>
+        <th>Цена за шт.</th>
+        <th>Общая цена</th>
     </tr>
-
-    <tr>
-        <td>Имя -</td>
-        <td> {{  $cart['name'] }}</td>
-    <tr>
-    <tr>
-        <td>Телефон -</td>
-        <td> {{  $cart['phone'] }}</td>
-    <tr>
-    <tr>
-        <td>Email -</td>
-        <td> {{  $cart['email'] }}</td>
-    <tr>
-
-     @foreach($cart as $carts):
-
+    @foreach($cart->items as $item)
+        @php
+            $pricePerUnit = $item['quantity'] > 0 ? $item['price'] / $item['quantity'] : $item['price'];
+        @endphp
         <tr>
-            <td> {{  $carts['title'] }} -</td>
-            <td> {{  $carts['quantity'] }}</td>
-            <td> {{  $carts['color'] }}</td>
-            <td> {{  $carts['price'] }}</td>
-        <tr>
-
-     @endforeach;
-
-
+            <td>{{ $item['title'] }}</td>
+            <td>{{ $item['article'] }}</td>
+            <td>{{ $item['color'] }}</td>
+            <td>{{ $item['size'] }}</td>
+            <td>
+                @if($item['with_printing'])
+                    <span class="printing-badge">Да (+{{ $item['printing_cost'] }} ₽)</span>
+                @else
+                    Нет
+                @endif
+            </td>
+            <td>{{ $item['quantity'] }}</td>
+            <td>{{ number_format($pricePerUnit, 2, '.', ' ') }} ₽</td>
+            <td>{{ number_format($item['price'], 2, '.', ' ') }} ₽</td>
+        </tr>
+    @endforeach
 </table>
+
+<p><strong>Дата заказа:</strong> {{ $cart->created_at->format('d.m.Y H:i') }}</p>
 
 </body>
 </html>
