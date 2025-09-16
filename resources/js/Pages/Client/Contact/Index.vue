@@ -7,6 +7,12 @@
 </style>
 
 <template>
+
+    <Head>
+        <title>Контакты </title>
+
+    </Head>
+
     <div class="wrapper">
         <Header :categories="categories" />
         <div class="row">

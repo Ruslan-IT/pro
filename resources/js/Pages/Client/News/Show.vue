@@ -10,6 +10,11 @@
 
 <template>
 
+    <Head>
+        <title>{{ newsItem.title }}</title>
+
+    </Head>
+
     <div class="wrapper">
 
         <Header :categories="categories" />
@@ -47,7 +52,7 @@
 
 <script setup>
 
-import { Link } from '@inertiajs/vue3';
+import {Head, Link} from '@inertiajs/vue3';
 import { defineProps } from 'vue';
 import Header from "@/Components/Client/Header.vue";
 import Footer from "@/Components/Footer.vue"

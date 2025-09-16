@@ -15,11 +15,16 @@
                 <h1 class="mb-4">Результаты поиска: "{{ query }}"</h1>
 
                 <!-- Отображаем товары -->
-                <div class="row" v-if="products && products.length">
-                    <div v-for="product in products" :key="product.id" class="col-md-2 mb-5">
+                <div class="row g-3" v-if="products && products.length">
+                    <div
+                        v-for="product in products"
+                        :key="product.id"
+                        class="col-6 col-sm-4 col-md-3 col-lg-2"
+                    >
                         <ProductItem :product="product" />
                     </div>
                 </div>
+
 
                 <!-- Сообщение, если товаров нет -->
                 <div v-else class="alert alert-info">
@@ -63,13 +68,17 @@ const formatPrice = (price) => {
 
 <style>
 
+.row{
+    justify-content: center;
+}
+
 .product-card[data-v-8f09e388] {
     width: 100%;
 }
 .product-main-image[data-v-8f09e388] {
     border:none;
 }
-.col-md-2 {
-    width: 20.666667%;
-}
+
+
+
 </style>

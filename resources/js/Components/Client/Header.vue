@@ -45,11 +45,19 @@
                     <img src="https://web-ruslan.ru/img/logo.png" alt="logo">
                 </div>
                 <div class="col-xl-8">
-                    <button class="navbar-toggler ds-mob" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                            aria-label="Toggle navigation">
+                    <!-- Бургер -->
+                    <button
+                        class="navbar-toggler ds-mob"
+                        type="button"
+                        @click="toggleMenu"
+                        aria-controls="navbarNav"
+                        aria-expanded="isMenuOpen"
+                        aria-label="Toggle navigation"
+                    >
                         <span class="navbar-toggler-icon"></span>
                     </button>
+
+
 
                     <div class="input-group">
                         <input type="text"
@@ -102,12 +110,7 @@
                         <a href="">8 (499) 394 38 41</a>
                     </span>
                 </div>
-                <div class="catalogmobile__my">
-                    <div class="nav-item catalog">
-                        <a class="nav-link" href="#">КАТАЛОГ</a>
-                        <span></span>
-                    </div>
-                </div>
+
 
                 <!-- Это будет общий блок, видимый только на мобилке -->
                 <div class="nav-item catalog mobile-only" @click="toggleMobileCatalog">
@@ -161,8 +164,13 @@
                 <div class="col-xl-2"></div>
                 <div class="col-xl-8">
                     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
                         <div class="container-fluid header__menu">
-                            <div class="collapse navbar-collapse" id="navbarNav">
+
+                            <div class="collapse navbar-collapse"
+                                 id="navbarNav"
+                                 :class="{ show: isMenuOpen }"
+                            >
                                 <ul class="navbar-nav">
                                     <!-- Каталог -->
                                     <li class="nav-item catal catalog__desc"
@@ -284,9 +292,13 @@
                                 </ul>
 
                                 <!-- Кнопка закрытия для мобильного меню -->
-                                <button class="btn-close d-lg-none ms-auto" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#navbarNav" aria-controls="navbarNav"
-                                        aria-label="Close"></button>
+                                <button
+                                    class="btn-close d-lg-none ms-auto"
+                                    type="button"
+                                    @click="closeMenu"
+                                    aria-controls="navbarNav"
+                                    aria-label="Close"
+                                ></button>
                             </div>
                         </div>
                     </nav>
@@ -406,7 +418,8 @@
                                 v-model="orderForm.agreedToPrivacy"
                             >
                             <label for="privacy">
-                                Я согласен с <a style="text-decoration: underline " href="/privacy-policy" target="_blank">политикой конфиденциальности</a>
+                                Я согласен с <a style="text-decoration: underline " href="/pages/privacy-policy" target="_blank">
+                                политикой конфиденциальности</a>
                             </label>
                         </div>
 
@@ -438,7 +451,15 @@ import { Link, router } from '@inertiajs/vue3'
 import axios from 'axios'
 import { useCartStore } from '@/store/cart'
 
+const isMenuOpen = ref(false);
 
+function toggleMenu() {
+    isMenuOpen.value = !isMenuOpen.value;
+}
+
+function closeMenu() {
+    isMenuOpen.value = false;
+}
 
 
 const cartStore = useCartStore()

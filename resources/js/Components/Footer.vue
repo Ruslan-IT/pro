@@ -16,11 +16,11 @@
                 <div class="col-md-4 mb-4 mb-md-0 footer__item">
                     <ul class="footer-links">
                         <li><a href="#">О КОМПАНИИ</a></li>
-                        <li><a href="#">НОВОСТИ</a></li>
-                        <li><a href="#">СТАТЬИ</a></li>
+                        <li><a href="/news">НОВОСТИ</a></li>
+                        <li><a href="/articles">СТАТЬИ</a></li>
                         <li><a href="#">ОПЛАТА</a></li>
                         <li><a href="#">КАРТА САЙТА</a></li>
-                        <li><a href="#">КОНТАКТЫ</a></li>
+                        <li><a href="/contacts">КОНТАКТЫ</a></li>
                     </ul>
                 </div>
 
@@ -31,8 +31,13 @@
                         <a href="tel:84993906147">8 (499) 390 61 47</a>
                     </div>
                     <div class="footer-email">info@mvgifts.ru</div>
-                    <div class="footer-policy">ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ</div>
-                    <div class="footer-agreement mb-2">СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ</div>
+                    <div class="footer-policy">
+                        <a href="/pages/privacy-policy">
+                            ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ
+                        </a>
+
+                    </div>
+
 
                     <div class="footer-copyright-mob">
                         mvgifts.ru 2018-2025

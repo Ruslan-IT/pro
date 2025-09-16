@@ -9,6 +9,11 @@
 
 <template>
 
+    <Head>
+        <title>Оплата и доставка</title>
+
+    </Head>
+
     <div class="wrapper">
         <Header :categories="categories" />
         <div class="row">

@@ -11,6 +11,12 @@
 
 
 <template>
+
+    <Head>
+        <title>{{ getShortProductName(currentProduct)  }}</title>
+
+    </Head>
+
     <div class="wrapper">
 
         <Header :categories="categories" />
@@ -280,14 +286,17 @@
 
         </main>
 
+        <Footer/>
+
     </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import {Head, Link} from '@inertiajs/vue3';
 import Header from "@/Components/Client/Header.vue";
 import { useCartStore } from '@/store/cart'
+import Footer from "@/Components/Footer.vue";
 
 const cartStore = useCartStore()
 const withPrinting = ref(false)
@@ -578,7 +587,7 @@ function addToCart() {
     variantsForSelectedColor.value.forEach(variantGroup => {
         const quantity = getQuantity(variantGroup)
         if (quantity > 0) {
-            alert(withPrinting.value)
+
             cartStore.addItem(
                 {
                     id: `${props.product.id}_${variantGroup.color}_${variantGroup.size}`,
@@ -771,7 +780,7 @@ function addToCart() {
 
 .grid-header {
     display: grid;
-    grid-template-columns: 1fr 1fr 3fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
@@ -780,7 +789,7 @@ function addToCart() {
 
 .product-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 3fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 10px;
     padding: 8px 0;
     border-bottom: 1px solid #f5f5f5;

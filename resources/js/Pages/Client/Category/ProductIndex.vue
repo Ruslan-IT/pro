@@ -9,6 +9,12 @@
 </style  >
 
 <template>
+
+    <Head>
+        <title>{{ catalogs.title }}</title>
+
+    </Head>
+
     <div class="wrapper">
 
 
@@ -74,7 +80,7 @@
                                         </button>
                                     </div>
 
-                                    <div class="h3">Все разделы1</div>
+                                    <div class="h3">Все разделы</div>
                                     <div class="">
                                         <div id="catalog" v-if="product_count_subcategories.length > 0">
                                             <div>
@@ -225,7 +231,8 @@
 
                         <div class="pagination-container mt-4" v-if="pagination && pagination.links">
                             <div class="pagination">
-                                <template v-for="(link, index) in pagination.links" :key="index">
+
+                                <template v-for="(link, index) in visibleLinks" :key="index">
                                     <a
                                         v-if="link.url"
                                         :href="link.url"
@@ -236,6 +243,7 @@
                                     ></a>
                                     <span v-else v-html="link.label" class="pagination-disabled"></span>
                                 </template>
+
                             </div>
                         </div>
 
@@ -259,7 +267,8 @@ import ProductItem from "@/Components/Client/Product/Productitem.vue"
 import Header from "@/Components/Client/Header.vue" // Импортируем компонент Header
 import Footer from "@/Components/Footer.vue"
 
-import { Link, router  } from "@inertiajs/vue3"
+
+import { Link, router, Head  } from "@inertiajs/vue3"
 import noUiSlider from 'nouislider'
 import 'nouislider/dist/nouislider.css'
 
@@ -304,6 +313,8 @@ const productWord = computed(() => {
     if (lastDigit >= 2 && lastDigit <= 4) return 'товара'
     return 'товаров'
 })
+
+
 
 //Управление фильтрами:
 const setFilter = (item, value) => {
@@ -407,6 +418,43 @@ const handlePagination = (url) => {
 }
 
 
+</script>
+
+
+<script>
+export default {
+    props: {
+        pagination: Object,
+    },
+
+    computed: {
+        visibleLinks() {
+            if (!this.pagination) return [];
+            const current = this.pagination.current_page;
+
+            return this.pagination.links
+                .map((link) => {
+                    let label = link.label;
+
+                    // меняем текст
+                    if (label.includes('Previous')) {
+                        label = 'Назад';
+                    } else if (label.includes('Next')) {
+                        label = 'Вперёд';
+                    }
+
+                    return { ...link, label };
+                })
+                .filter((link) => {
+                    if (!link.url || isNaN(link.label)) {
+                        return true; // "Prev" и "Next" оставляем
+                    }
+                    const page = Number(link.label);
+                    return page >= current - 1 && page <= current + 1;
+                });
+        },
+    },
+};
 </script>
 
 <style>
@@ -694,7 +742,9 @@ input[type=checkbox] + label {
 .product-main-image[data-v-8f09e388]{
     border: 0;
 }
-
+.product-main-image {
+    border: 0;
+}
 
 
 

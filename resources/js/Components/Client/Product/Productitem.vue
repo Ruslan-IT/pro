@@ -38,9 +38,7 @@
 
             <div class="product-footer">
                 <div class="product-price">{{ currentProduct.price }} ₽</div>
-                <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
-                     alt="Корзина"
-                     class="cart-icon">
+
             </div>
         </div>
     </div>

@@ -1089,6 +1089,7 @@ footer {
     background-color: #404042;
     color: #fff;
     padding: 60px 0;
+    margin: 90px 0 0 0;
 }
 .relative__buttton{
     position: relative;
@@ -1122,10 +1123,12 @@ footer {
 
 .footer-copyright {
     font-size: 14px;
+    text-align: left;
 }
 
 .footer-rights {
     font-size: 14px;
+    text-align: left;
 }
 
 .footer-links {
