@@ -745,6 +745,9 @@ input[type=checkbox] + label {
 .product-main-image {
     border: 0;
 }
+.product-main-image[data-v-f0dec931] {
+    border: none;
+}
 
 
 

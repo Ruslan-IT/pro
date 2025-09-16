@@ -122,7 +122,7 @@ class CategoryController extends Controller
         $groupedProductsCollection = collect(array_values($groupedProducts));
 
         // пагинацию:
-        $perPage = $request->input('per_page', 6);
+        $perPage = $request->input('per_page', 20);
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $groupedProductsCollection->forPage($currentPage, $perPage);
 
