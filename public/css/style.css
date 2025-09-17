@@ -1410,7 +1410,7 @@ footer {
 
 .product-price {
     font-family: 'pt_sans_bold';
-    font-size: 36px;
+   /* font-size: 36px;*/
     font-weight: 700;
     color: #000000!important;
     margin: 54px 0 0 0;

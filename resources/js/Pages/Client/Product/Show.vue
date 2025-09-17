@@ -1035,9 +1035,9 @@ function addToCart() {
     /*border-color: #3498db;*/
 }
 
-input[type=checkbox] {
+/*input[type=checkbox] {
     display: block!important;
-}
+}*/
 .custom-checkbox-container{
     max-width: 210px;
 }
