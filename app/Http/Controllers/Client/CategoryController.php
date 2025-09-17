@@ -117,6 +117,8 @@ class CategoryController extends Controller
         }
 
 
+
+
         $groupedProducts = CategoryService::getProductParamVariants($productQuery->get());
 
         $groupedProductsCollection = collect(array_values($groupedProducts));
