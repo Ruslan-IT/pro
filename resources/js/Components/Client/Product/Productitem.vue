@@ -195,6 +195,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    font-size: 18px!important;
 }
 
 .block__img__cart {
