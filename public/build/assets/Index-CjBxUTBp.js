@@ -1,0 +1,1 @@
+import{A as o}from"./AdminLayout-twPY8OO3.js";import{_ as t}from"./_plugin-vue_export-helper-DlAUqK2U.js";import"./app-BXh85SEp.js";const r={name:"Index",layout:o};function a(e,n,s,c,d,p){return" dashboard "}const i=t(r,[["render",a]]);export{i as default};
