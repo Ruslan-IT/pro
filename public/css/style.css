@@ -1336,7 +1336,7 @@ footer {
 }
 
 .product__block .col-4{
-    max-width: 150px;
+    /*max-width: 150px;*/
     height: 120px;
 }
 
@@ -1441,7 +1441,7 @@ footer {
     }
 
     .row__order__desc{
-        display: none;
+        /*display: none;*/
     }
 
     .vertical-thumbnails{

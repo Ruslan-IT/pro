@@ -750,6 +750,11 @@ input[type=checkbox] + label {
 }
 
 
+.product-name{
+    font-weight: 400!important;
+}
+
+
 
 </style>
 

@@ -65,6 +65,7 @@
             </section>
 
             <div class="container ">
+                <h1 class="product-title">{{  getShortProductName(currentProduct)  }}</h1>
                 <div class="product-container">
 
                     <!-- Левая часть - фотогалерея -->
@@ -78,9 +79,11 @@
                              class="main-image">
 
 
-                        <!-- Миниатюры дополнительных изображений для текущего варианта -->
-                        <div class="row product__block" v-if="hasAdditionalImages">
-                            <div class="col-4" v-for="(img, index) in validAdditionalImages" :key="index">
+                        <!-- Миниатюры дополнительных изображений -->
+                        <div class="product__block thumbnails-slider" v-if="hasAdditionalImages">
+                            <div class="thumb-item"
+                                 v-for="(img, index) in validAdditionalImages"
+                                 :key="index">
                                 <img :src="img"
                                      alt="Дополнительное фото"
                                      class="thumbnail"
@@ -93,7 +96,7 @@
 
                     <!-- Правая часть - информация о товаре -->
                     <div class="col-md-6">
-                        <h1 class="product-title">{{  getShortProductName(currentProduct)  }}</h1>
+
 
                         <div class="row__order__desc">
                             <!-- Описание товара -->
@@ -1047,5 +1050,36 @@ function addToCart() {
 #privacy{
     display: none!important;
 }
+
+.thumbnails-slider {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 10px;
+}
+
+.thumb-item {
+    flex: 0 0 auto;
+    width: 90px; /* ширина миниатюры */
+    scroll-snap-align: start;
+}
+
+.thumbnail {
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.thumbnail.active {
+    border-color: #3498db;
+}
+.product-title {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+}
+
 
 </style>

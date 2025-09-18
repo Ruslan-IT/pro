@@ -78,6 +78,10 @@ const formatPrice = (price) => {
 .product-main-image[data-v-8f09e388] {
     border:none;
 }
+.product-main-image[data-v-9c4114e3] {
+    border: none!important;
+}
+
 @media (max-width: 1024px) {
     .product-card[data-v-9c4114e3] {
         width: 100%;
@@ -100,5 +104,7 @@ const formatPrice = (price) => {
         width: 100%;
     }
 }
+
+
 
 </style>
