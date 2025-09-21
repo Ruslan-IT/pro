@@ -18,9 +18,11 @@
                     <h1 class="page-title">Наше портфолио</h1>
 
                     <div class="portfolio-grid">
+
                         <div v-for="item in portfolio.data" :key="item.id" class="portfolio-item">
                             <div class="portfolio-image">
-                                <img :src="`/storage/${item.image}` || `/storage/img/portfolio/${item.id}.jpg`" :alt="item.title">
+
+                                <img :src="`/storage/${item.image}` " :alt="item.title">
                                 <div class="portfolio-overlay">
                                     <Link :href="`/portfolio/${item.slug}`" class="view-project">Смотреть проект</Link>
                                 </div>
@@ -47,6 +49,7 @@
                             />
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

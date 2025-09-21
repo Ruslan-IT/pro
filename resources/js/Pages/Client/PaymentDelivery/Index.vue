@@ -89,4 +89,9 @@ export default {
 }
 
 
+@media (max-width: 1100px) {
+    .payment-delivery-page{
+        padding: 0 15px;
+    }
+}
 </style>

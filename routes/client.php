@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\CategoryController;
+use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\ProductController;
 use App\Http\Controllers\Client\SearchController;
 use App\Http\Controllers\PageController;
@@ -32,6 +33,8 @@ Route::name('client.')->group(function (){
     Route::resource('/carts', CartController::class);
 
     Route::post('/cart/store', [CartController::class, 'store'])->name('cart.store');
+
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
 });

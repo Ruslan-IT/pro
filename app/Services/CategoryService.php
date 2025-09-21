@@ -105,7 +105,7 @@ class CategoryService
         //dd($category->id_parent);
         $arr = [];
         if($category->id_parent){
-            $parentCategory = Category::select(['id', 'id_parent', 'title'])
+            $parentCategory = Category::select(['id', 'id_parent', 'title', 'url'])
                 ->find($category->id_parent);
 
             $arr[] = $parentCategory;

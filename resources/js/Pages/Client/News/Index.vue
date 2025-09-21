@@ -22,20 +22,26 @@
                 <div class="news-page">
                     <h1 class="page-title">Новости</h1>
 
-                    <div class="news-grid">
-                        <div v-for="item in news.data" :key="item.id" class="news-card">
-                            <div class="news-image">
-                                <img :src="item.image || `/img/news/${item.id}.jpg`" :alt="item.title">
+                    <div class="portfolio-grid">
+
+                        <div v-for="item in news.data" :key="item.id" class="portfolio-item">
+                            <div class="portfolio-image">
+
+                                <img :src="`storage/${item.image}`" :alt="item.title">
+                                <div class="portfolio-overlay">
+                                    <Link :href="`/news/${item.slug}`" class="view-project">Смотреть проект</Link>
+                                </div>
+
                             </div>
-                            <div class="news-content">
-                                <h2 class="news-title">
+                            <div class="portfolio-content">
+                                <h2 class="portfolio-title">
                                     <Link :href="`/news/${item.slug}`">{{ item.title }}</Link>
                                 </h2>
-                                <p class="news-excerpt">{{ item.excerpt }}</p>
-                                <div class="news-meta">
-                                    <span class="news-date">{{ formatDate(item.published_at) }}</span>
+                                <p class="portfolio-excerpt">{{ item.excerpt }}</p>
+                                <div class="portfolio-meta">
+                                    <span class="portfolio-date">{{ formatDate(item.created_at) }} </span>
                                 </div>
-                                <Link :href="`/news/${item.slug}`" class="read-more">Читать далее</Link>
+                                <Link :href="`/news/${item.slug}`" class="read-more">Подробнее</Link>
                             </div>
                         </div>
                     </div>
@@ -199,6 +205,121 @@ const formatDate = (dateString) => {
     cursor: not-allowed;
 }
 
+.portfolio-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
 
+.page-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.portfolio-item {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.portfolio-item:hover {
+    transform: translateY(-5px);
+}
+
+.portfolio-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.portfolio-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.portfolio-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.portfolio-item:hover .portfolio-overlay {
+    opacity: 1;
+}
+
+.view-project {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    background: #ff1818;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.portfolio-content {
+    padding: 1.5rem;
+}
+
+.portfolio-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.portfolio-title a {
+    color: #333;
+    text-decoration: none;
+}
+
+.portfolio-title a:hover {
+    color: #007bff;
+}
+
+.portfolio-excerpt {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.portfolio-meta {
+    margin-bottom: 1rem;
+}
+
+.portfolio-date {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.read-more {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}
+
+.view-project:hover{
+    color: #000!important;
+}
 
 </style>

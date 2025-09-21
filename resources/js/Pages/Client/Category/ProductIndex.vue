@@ -41,7 +41,7 @@
                                         <span v-if="breadcrumbs.length > 0" class="">
 
                                             <Link v-for="breadcrumb in breadcrumbs"
-                                                  :href="route('client.categories.products.index', breadcrumb.id)"
+                                                  :href="route('client.categories.products.index', breadcrumb.url)"
                                                   class="">
                                                 {{ breadcrumb.title }}
                                             </Link>
@@ -69,19 +69,32 @@
 
                     <div class="container">
                         <div class="catalogs d__none">
-                            <aside class="filter" style="position: relative;">
 
-                                <form action="/catalog/futbolki/" method="GET" id="filtr_form">
-                                    <div class="result_with_filtr" style="position: relative; display: inline-block;">
-                                        <button type="button">Найдено
-                                            <span style="font-weight: bold">{{ totalCount }}</span>
-                                            <div v-if="totalCount > 0">{{ productWord }}</div>
-                                            <div v-else>товаров не найдено</div>
-                                        </button>
-                                    </div>
+                            <!-- Кнопка Фильтр (видна только на мобиле) -->
+                            <button
+                                class="filter-toggle mobile-only"
+                                @click="showFilter = !showFilter"
+                            >
+                                {{ showFilter ? 'Скрыть фильтр' : 'Фильтр' }}
+                            </button>
 
-                                    <div class="h3">Все разделы</div>
-                                    <div class="">
+                            <transition name="slide">
+
+                                <aside  class="filter" :class="{ active: showFilter }" style="position: relative;">
+
+                                    <form action="/catalog/futbolki/" method="GET" id="filtr_form">
+                                        <!-- Найдено товаров -->
+                                        <div class="result_with_filtr" style="position: relative; display: inline-block;">
+                                            <button type="button">
+                                                Найдено
+                                                <span style="font-weight: bold">{{ totalCount }}</span>
+                                                <div v-if="totalCount > 0">{{ productWord }}</div>
+                                                <div v-else>товаров не найдено</div>
+                                            </button>
+                                        </div>
+
+                                        <!-- Категории -->
+                                        <div class="h3">Все разделы</div>
                                         <div id="catalog" v-if="product_count_subcategories.length > 0">
                                             <div>
                                                 <Link v-for="product_count_subcategorie in product_count_subcategories"
@@ -94,7 +107,36 @@
                                             </div>
                                         </div>
 
+                                        <!-- Цена -->
+                                        <div v-if="params.drawing">
+                                            <div class="h3">Цена <i class="fa fa-rub "></i></div>
+                                            <div class="price">
+                                                <div class="row row__block">
+                                                    <label for="amount_from">от</label>
+                                                    <input
+                                                        v-model="filters.integer.from.drawing"
+                                                        type="number"
+                                                        name="price_from"
+                                                        @change="updateSlider"
+                                                        id="amount_from"
+                                                        min="0"
+                                                        max="10000">
 
+                                                    <label for="amount_to">до</label>
+                                                    <input
+                                                        v-model="filters.integer.to.drawing"
+                                                        type="number"
+                                                        name="price_to"
+                                                        @change="updateSlider"
+                                                        id="amount_to"
+                                                        min="0"
+                                                        max="10000">
+                                                </div>
+                                                <div id="price-slider" class="mt-3 mb-3"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Остаток -->
                                         <div class="h3">Остаток</div>
                                         <div class="residue">
                                             <div class="row__block">
@@ -119,6 +161,7 @@
                                             <div id="residue-slider" class="mt-3 mb-3"></div>
                                         </div>
 
+                                        <!-- Склад -->
                                         <div class="h3">Склад</div>
                                         <div class="row">
                                             <ul id="warehouse">
@@ -127,101 +170,95 @@
                                                     <label for="sklad_1">Москва</label>
                                                 </li>
                                             </ul>
-
-                                            <template v-for="(param, paramType)  in params " :key="paramType">
-
-                                                <div v-if="paramType === 'material' ">
-                                                    <div class="h3">Материал</div>
-                                                    <div class="row">
-                                                        <ul id="material">
-                                                            <li v-for="(item, index) in param" :key="index">
-
-                                                                <input
-                                                                    @change="setFilter(item, item.change)"
-                                                                    :id="'material_' + item.param_id"
-                                                                    type="checkbox"
-                                                                    name=""
-                                                                    :value="item.type">
-                                                                <label :for="'material_' + item.param_id">
-
-                                                                    {{ item.change }}
-
-                                                                </label>
-                                                            </li>
-                                                        </ul>
-
-                                                    </div>
-                                                </div>
-
-                                                <div v-if="paramType === 'brand' ">
-                                                    <div class="h3">Бренд</div>
-                                                    <div class="row">
-                                                        <ul id="brand">
-                                                            <li v-for="(item, index) in param" :key="index">
-
-                                                                <input
-                                                                    @change="setFilter(item, item.change)"
-                                                                    :id="'brand_' + item.param_id"
-                                                                    type="checkbox" name=""
-                                                                    :value="item.change">
-                                                                <label :for="'brand_' + item.param_id">
-
-                                                                    {{ item.change }}
-
-                                                                </label>
-                                                            </li>
-                                                        </ul>
-
-                                                    </div>
-
-
-                                                </div>
-
-                                                <div v-if="paramType === 'drawing' ">
-
-                                                    <div class="h3">Цена <i class="fa fa-rub "></i></div>
-
-                                                    <div class="price ">
-                                                        <div class="row row__block">
-
-                                                            <label for="amount_from">от</label>
-                                                            <input
-                                                                v-model="filters.integer.from[paramType]"
-                                                                type="number"
-                                                                name="price_from"
-                                                                @change="updateSlider"
-                                                                id="amount_from"
-                                                                min="0"
-                                                                max="10000">
-
-                                                            <label for="amount_to">до</label>
-                                                            <input
-                                                                v-model="filters.integer.to[paramType]"
-                                                                type="number"
-                                                                name="price_to"
-                                                                @change="updateSlider"
-                                                                id="amount_to"
-                                                                min="0"
-                                                                max="10000">
-                                                        </div>
-                                                        <div id="price-slider" class="mt-3 mb-3"></div>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </template>
-
-                                            <a @click.prevent="getPosts"
-                                               href="#"
-                                               class="block text-center px-3 py-2 text-gray-300 bg-indigo-800 border border-indigo-900">Фильтр
-                                            </a>
-
-
                                         </div>
-                                    </div>
-                                </form>
-                            </aside>
+
+                                        <!-- Цвет -->
+    <!--                                    <div v-if="params.color">
+                                            <div class="h3">Цвет</div>
+                                            <div class="row">
+                                                <ul id="color">
+                                                    <li v-for="(item, index) in params.color" :key="index">
+                                                        <input
+                                                            @change="setFilter(item, item.change)"
+                                                            :id="'color_' + item.param_id"
+                                                            type="checkbox"
+                                                            :value="item.type">
+                                                        <label :for="'color_' + item.param_id">
+                                                            {{ item.change }}
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>-->
+
+                                        <!-- Материал -->
+                                        <div v-if="params.material">
+                                            <div class="h3">Материал</div>
+                                            <div class="row">
+                                                <ul id="material">
+                                                    <li v-for="(item, index) in materialsList" :key="index">
+                                                        <input
+                                                            @change="setFilter(item, item.change)"
+                                                            :id="'material_' + item.param_id"
+                                                            type="checkbox"
+                                                            :value="item.type">
+                                                        <label :for="'material_' + item.param_id">
+                                                            {{ item.change }}
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                                <button
+                                                    v-if="Object.values(params.material).length > 6"
+                                                    type="button"
+                                                    class="btn btn-link p-0 d-flex align-items-center gap-1 toggle-btn"
+                                                    @click="showAllMaterials = !showAllMaterials"
+                                                >
+                                                    {{ showAllMaterials ? 'Свернуть' : 'Ещё' }}
+                                                    <span :class="['arrow', { 'open': showAllMaterials }]"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Бренд -->
+                                        <div v-if="params.brand">
+                                            <div class="h3">Бренд</div>
+                                            <div class="row">
+                                                <ul id="brand">
+                                                    <li v-for="(item, index) in brandsList" :key="index">
+                                                        <input
+                                                            @change="setFilter(item, item.change)"
+                                                            :id="'brand_' + item.param_id"
+                                                            type="checkbox"
+                                                            :value="item.change">
+                                                        <label :for="'brand_' + item.param_id">
+                                                            {{ item.change }}
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                                <button
+                                                    v-if="Object.values(params.brand).length > 6"
+                                                    type="button"
+                                                    class="btn btn-link p-0 d-flex align-items-center gap-1 toggle-btn"
+                                                    @click="showAllBrands = !showAllBrands"
+                                                >
+                                                    {{ showAllBrands ? 'Свернуть' : 'Ещё' }}
+                                                    <span :class="['arrow', { 'open': showAllBrands }]"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Кнопка фильтрации -->
+                                        <a @click.prevent="getPosts"
+                                           href="#"
+                                           class="block text-center px-3 py-2 text-gray-300 bg-indigo-800 border border-indigo-900">
+                                            Фильтровать
+                                        </a>
+                                    </form>
+
+                                </aside>
+
+                            </transition>
+
                         </div>
                         <div class="product__card__block__main product__color">
 
@@ -418,6 +455,27 @@ const handlePagination = (url) => {
 }
 
 
+const showAllMaterials = ref(false)
+const showAllBrands = ref(false)
+
+const materialsList = computed(() => {
+    const list = props.params.material ? Object.values(props.params.material) : []
+    return showAllMaterials.value ? list : list.slice(0, 6)
+})
+
+const brandsList = computed(() => {
+    const list = props.params.brand ? Object.values(props.params.brand) : []
+    return showAllBrands.value ? list : list.slice(0, 6)
+})
+
+const showFilter = ref(false);
+const isMobile = ref(false);
+
+onMounted(() => {
+    isMobile.value = window.innerWidth <= 768; // условие для мобилы
+});
+
+
 </script>
 
 
@@ -455,6 +513,11 @@ export default {
         },
     },
 };
+
+
+
+
+
 </script>
 
 <style>
@@ -752,9 +815,76 @@ input[type=checkbox] + label {
 
 .product-name{
     font-weight: 400!important;
+    font-family: 'pt_sans_bold'!important;
+    font-size: 14px!important;
+}
+
+.filter {
+    font-family: 'OpenSans Regular';
+   font-size: 17px!important;
+}
+
+.toggle-btn .arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    vertical-align: middle;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #333;
+    transition: transform 0.3s ease;
 }
 
 
+.toggle-btn .arrow.open {
+    transform: rotate(180deg);
+}
+
+.filter button {
+    border: none!important;
+    background: #f9f9f9;
+    margin: 0 0 0 15px;
+
+}
+
+.btn-link:hover {
+    color: #000;
+}
+.btn-link {
+    color: #333;
+}
+
+input[type=checkbox] + label {
+    font-family: 'OpenSans Regular';
+    font-size: 17px!important;
+}
+
+@media (max-width: 768px) {
+    .filter-toggle.mobile-only {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background: #ee2a27;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        margin-bottom: 10px;
+    }
+
+    .filter {
+        display: none;
+    }
+}
+
+
+
+.filter.active {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
 
 </style>
 

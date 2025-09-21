@@ -5,7 +5,7 @@ import axios from 'axios'
 export const useCartStore = defineStore('cart', () => {
     const items = ref([])
     const isOpen = ref(false)
-    const printingCost = 100; // стоимость нанесения в рублях
+    const printingCost = 0; // стоимость нанесения в рублях
 
     // Загрузка корзины из localStorage при инициализации
     if (localStorage.getItem('cart')) {

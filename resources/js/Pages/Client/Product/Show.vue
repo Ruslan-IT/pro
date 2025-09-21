@@ -123,11 +123,12 @@
                                             :class="{ 'custom-checkbox-label': true, 'active': withPrinting }"
                                         >
                                             {{ withPrinting ? 'С нанесением' : 'Без нанесения' }}
-                                            <span v-if="withPrinting">(+ {{ printingCost }} ₽)</span>
+                                            <span v-if="withPrinting"><!--(+ {{ printingCost }} ₽)--></span>
+                                            <span class="circle"></span>
                                         </label>
                                         <input
                                             type="checkbox"
-                                            class="custom-checkbox"
+                                            class=""
                                             id="customCheckbox"
                                             v-model="withPrinting"
 
@@ -1017,6 +1018,16 @@ function addToCart() {
 .custom-checkbox-container {
     margin: 15px 0;
 }
+.custom-checkbox{
+    display: block!important;
+    color: #333!important;
+    border: 1px solid #333!important;
+    background-color: #333!important;
+}
+.custom-checkbox-label{
+    color: #333!important;
+
+}
 
 .custom-checkbox-label {
    /* display: inline-block;
@@ -1079,6 +1090,49 @@ function addToCart() {
 .product-title {
     font-size: 1.5rem;
     margin-bottom: 3rem;
+}
+
+
+
+
+
+.custom-checkbox {
+    display: none; /* полностью скрываем чекбокс */
+}
+
+.custom-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px solid #ccc;
+    border-radius: 50px;
+    padding: 5px 15px;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.custom-checkbox-label .circle {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    margin-left: 10px;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+/* Активное состояние */
+.custom-checkbox-label.active {
+    border-color: #e53935;
+    color: #000;
+}
+
+.custom-checkbox-label.active .circle {
+    background-color: #e53935;
+    border-color: #e53935;
 }
 
 

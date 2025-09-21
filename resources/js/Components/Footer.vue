@@ -1,7 +1,10 @@
 <template>
     <footer class="footer">
         <div class="container relative">
-            <img class="img__top" src="/img/top.png" alt="">
+
+            <img class="img__top" src="/img/top.png" @click="scrollToTop" alt="">
+
+
             <div class="footer__block">
                 <!-- 1 колонка - Лого и копирайт -->
                 <div class="col-md-4 mb-4 mb-md-0 footer__item">
@@ -51,6 +54,13 @@
 
 <script setup>
 
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth", // плавная прокрутка
+    });
+}
+
 </script>
 
 <style scoped>
@@ -59,6 +69,17 @@ footer {
     background-color: #404042;
     color: #fff;
     padding: 60px 0;
+}
+
+.img__top {
+    cursor: pointer;
+    position: absolute;
+
+    transition: transform 0.3s;
+}
+
+.img__top:hover {
+    transform: translateY(-5px);
 }
 
 </style>

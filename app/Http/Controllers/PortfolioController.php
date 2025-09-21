@@ -18,7 +18,10 @@ class PortfolioController extends Controller
             ->orderBy('published_at', 'desc')
             ->paginate(10);
 
+
         $categoryChildren = CategoryService::getCategoryChildren2($catalogs);
+
+
 
 
         return Inertia::render('Client/Portfolio/Index', [

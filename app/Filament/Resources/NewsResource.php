@@ -69,9 +69,9 @@ class NewsResource extends Resource
                 Forms\Components\Section::make('Медиа')
                     ->schema([
                         Forms\Components\FileUpload::make('image')
-                            ->label('Изображение1')
+                            ->label('Изображение главное')
                             ->image()
-                            ->directory('news')
+                            ->directory('img/news/main')
                             ->maxSize(2048)
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('16:9')

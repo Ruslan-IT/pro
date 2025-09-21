@@ -6,19 +6,27 @@
 </style>
 
 <template>
-    <div class="container">
+
         <Header :categories="$page.props.categories" />
 
         <div class="page-content">
 
-            <h1>{{ page.title }}</h1>
 
-            <div v-html="page.content"></div>
+
+            <div class="container">
+
+<!--                <h1>{{ page.title }}</h1>-->
+
+                 <div v-html="page.content">
+
+                 </div>
+
+            </div>
 
 
         </div>
 
-    </div>
+
 </template>
 
 <script>

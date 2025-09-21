@@ -66,7 +66,9 @@
                                v-model="searchQuery"
                                @input="handleSearchInput"
                                @focus="showSearchResults = true"
-                               @blur="hideSearchResults">
+                               @blur="hideSearchResults"
+                               @keyup.enter="submitSearch"
+                        >
 
                         <div class="input-group-append">
                             <button class="btn btn-secondary" type="button" @click="submitSearch">
@@ -114,18 +116,32 @@
 
                 <!-- Это будет общий блок, видимый только на мобилке -->
                 <div class="nav-item catalog mobile-only" @click="toggleMobileCatalog">
-                    <a class="nav-link" href="#">КАТАЛОГ</a>
+                    <div class="burger-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <a class="nav-link mob__catalog" href="#">КАТАЛОГ</a>
                     <span></span>
                 </div>
 
                 <!-- Мобильное меню каталога -->
                 <div v-if="showMobileCatalog" class="mobile-catalog-menu">
-                    <button class="close-btn" @click="toggleMobileCatalog">Закрыть</button>
+
+
+                    <button
+                        class="btn-close d-lg-none ms-auto"
+                        type="button" aria-controls="navbarNav"
+                        aria-label="Close"
+                        @click="toggleMobileCatalog"
+                    >
+
+                    </button>
 
                     <ul class="mobile-catalog-list">
-                        <li v-for="category in categories" :key="category.id">
+                        <li class="mobile__catalog__li" v-for="category in categories" :key="category.id">
                             <!-- Категория -->
-                            <div class="category-title" @click="toggleMobileSubcategory(category.id)">
+                            <div style="text-transform: uppercase;" class="category-title" @click="toggleMobileSubcategory(category.id)">
                                 {{ category.title }}
                             </div>
 
@@ -137,6 +153,7 @@
                                         class="subcategory-title"
                                         :href="`/categories/${subcategory.url}/products`"
                                         @click.stop="toggleMobileSubSubcategory(subcategory.id)"
+                                        style="text-transform: uppercase;"
                                     >
                                         {{ subcategory.title }}
                                     </a>
@@ -174,6 +191,7 @@
                                 <ul class="navbar-nav">
                                     <!-- Каталог -->
                                     <li class="nav-item catal catalog__desc"
+                                        :class="{ active: showCatalogDrop }"
                                         @mouseenter="openCatalogMenu"
                                         @mouseleave="handleMenuMouseLeave">
                                         <a class="nav-link catalog__mar" href="#">КАТАЛОГ</a>
@@ -245,7 +263,9 @@
                                                 <Link v-for="drawing in drawingsToShow"
                                                       :key="drawing.id"
                                                       :href="route('client.drawing.show', drawing.url)"
-                                                      class="drawing-dropdown-item">
+                                                      class="drawing-dropdown-item"
+                                                      style="text-transform: uppercase"
+                                                >
                                                     {{ drawing.title }}
                                                 </Link>
                                             </div>
@@ -355,7 +375,7 @@
                                             :class="{ 'printing-btn': true, 'active': item.withPrinting }"
                                             @click="setPrinting(index, true)"
                                         >
-                                            С нанесением (+ {{ cartStore.printingCost }} ₽)
+                                            С нанесением <!--(+ {{ cartStore.printingCost }} ₽)-->
                                         </button>
                                     </div>
                                 </div>
@@ -663,6 +683,15 @@ const handleSearchInput = () => {
     }, 300)
 }
 
+const submitSearch = () => {
+    if (searchQuery.value.trim()) {
+        goToSearchPage();
+    } else {
+        // Если запрос пустой, можно скрыть результаты поиска
+        showSearchResults.value = false;
+    }
+};
+
 const searchProducts = async () => {
     if (!searchQuery.value.trim()) {
         searchResults.value = []
@@ -841,9 +870,10 @@ export default {
 .drawing-dropdown-item {
     display: block;
     padding: 8px 20px;
-    color: #333;
+    color: #636363;
     text-decoration: none;
     transition: all 0.3s ease;
+    font-size: 14px;
 }
 
 .drawing-dropdown-item:hover {
@@ -994,7 +1024,7 @@ export default {
 #cart_qty {
     position: absolute;
     top: -8px;
-    right: 2px;
+    right: 8px;
     background-color: #e53935;
     color: white;
     border-radius: 50%;
@@ -1004,9 +1034,10 @@ export default {
     align-items: center;
     justify-content: center;
     font-size: 12px;
+    padding: 0 0 0 1px;
 }
 .header__top span{
-    padding: 0 3px 0 0!important;
+
 }
 
 /* Стили для формы */
@@ -1125,9 +1156,9 @@ export default {
 }
 
 .printing-btn.active {
-    background: #3498db;
+    background: #e53935;
     color: white;
-    border-color: #3498db;
+    border-color: #e53935;
 }
 
 .printing-btn:hover {
@@ -1135,7 +1166,7 @@ export default {
 }
 
 .printing-btn.active:hover {
-    background: #2980b9;
+    background: #e53935;
 }
 
 .printing-total {
@@ -1180,7 +1211,7 @@ export default {
     }
 
     .mobile-catalog-list li {
-        margin-bottom: 10px;
+       /* margin-bottom: 10px;*/
     }
 
     .category-title,
@@ -1199,13 +1230,14 @@ export default {
     .mobile-catalog-list > li {
         border-bottom: 1px solid #ddd;
         padding: 10px 0;
+
     }
 
     /* Заголовок категории */
     .category-title {
-        font-weight: bold;
-        font-size: 16px;
-        padding: 5px 0;
+
+        font-size: 14px;
+        padding: 0px 0;
     }
 
     /* Подкатегории */
@@ -1236,12 +1268,84 @@ export default {
         font-size: 13px;
         color: #333;
         text-decoration: none;
+        border-bottom: 1px solid #ddd
+    }
+    .mobile-catalog-list:hover a {
+        color: var(--text-hover-color);
     }
 
     .mobile-catalog-list a:hover {
         color: #007bff;
     }
+    .category-title, .subcategory-title{
+        font-weight: 400!important;
+    }
+
+    .mobile__catalog__li:hover{
+        color: var(--text-hover-color);
+        background: #ddd;
+    }
+
+
+
+
+
+
+
+    /*********************************************/
+    /* Бургер и слово "КАТАЛОГ" в строку */
+    .mobile-only {
+        display: flex;
+        align-items: center;
+        gap: 8px; /* расстояние между бургером и словом */
+        cursor: pointer;
+        justify-content: center;
+    }
+
+    /* Иконка-бургер */
+    .burger-icon {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 20px;
+        height: 14px;
+    }
+
+    .burger-icon span {
+        display: block;
+        height: 2px;
+        width: 100%;
+        background-color: #333; /* базовый цвет полосок */
+        transition: background-color 0.3s ease;
+    }
+
+    /* Текст и бургер при наведении */
+
+    .mobile-only:hover .burger-icon span {
+        color: #e53935;              /* текст */
+        background-color: #e53935;   /* полоски */
+    }
+
+    .burger-icon:hover .nav-link a {
+        color: #e53935;
+    }
+
 }
-/*********************************************/
+
+.nav-item.catalog.mobile-only{
+    margin: 30px 0 0 0;
+}
+
+.nav-link.mob__catalog{
+    padding: 5px 15px 5px 0px!important;
+}
+
+input[type=checkbox]+label {
+    font-size: 15px!important;
+    padding: 0 0 0 23px;
+}
+
+
+
 
 </style>

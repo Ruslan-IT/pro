@@ -41,7 +41,9 @@
                     </div>
 
                     <div class="company-details" v-if="page.company_name">
-                        <h2>Реквизиты</h2>
+
+
+
                         <div class="contact-item">
                             <strong>Название компании:</strong> {{ page.company_name }}
                         </div>
@@ -115,6 +117,12 @@ export default {
 }
 .contact-item strong[data-v-f36ea3c8] {
     min-width: 180px;
+}
+
+@media (max-width: 1100px) {
+    .contact-page{
+        padding: 0 15px;
+    }
 }
 
 </style>
