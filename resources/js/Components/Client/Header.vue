@@ -285,29 +285,29 @@
 
                                     <!-- Дополнительные пункты меню (только для десктопа) -->
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="#">Преимущества</a>
+                                        <a class="more_menu nav-link" href="/preimushestva">Преимущества</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="#">Награды</a>
+                                        <a class="more_menu nav-link" href="/nagrady">Награды</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="#">Благодарности</a>
+                                        <a class="more_menu nav-link" href="/blagodarnost">Благодарности</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="#">Новости</a>
+                                        <a class="more_menu nav-link" href="/news">Новости</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="#">Статьи</a>
+                                        <a class="more_menu nav-link" href="/articles">Статьи</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="#">Вопросы и ответы</a>
+                                        <a class="more_menu nav-link" href="/voprosy-i-otvety">Вопросы и ответы</a>
                                     </li>
 
                                     <li class="nav-item nav__block__none menu__phone">
-                                        <a class="nav-link" href="#">8 (499) 394 38 41</a>
+                                        <a class="nav-link" href="tel:+74993943841" title="Позвонить нам">8 (499) 394 38 41</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="nav-link menu__email" href="#">info@mvgifts.ru</a>
+                                        <a class="nav-link menu__email" href="mailto:info@mvgifts.ru" title="Написать нам">info@mvgifts.ru</a>
                                     </li>
                                 </ul>
 

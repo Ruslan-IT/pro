@@ -18,11 +18,11 @@
                 <!-- 2 колонка - Ссылки -->
                 <div class="col-md-4 mb-4 mb-md-0 footer__item">
                     <ul class="footer-links">
-                        <li><a href="#">О КОМПАНИИ</a></li>
+                        <li><a href="/kompanii">О КОМПАНИИ</a></li>
                         <li><a href="/news">НОВОСТИ</a></li>
                         <li><a href="/articles">СТАТЬИ</a></li>
-                        <li><a href="#">ОПЛАТА</a></li>
-                        <li><a href="#">КАРТА САЙТА</a></li>
+                        <li><a href="/oplata">ОПЛАТА</a></li>
+                        <li><a href="/karta-saita">КАРТА САЙТА</a></li>
                         <li><a href="/contacts">КОНТАКТЫ</a></li>
                     </ul>
                 </div>
@@ -31,9 +31,11 @@
                 <div class="col-md-4 footer__item">
                     <div class="footer-address">г. Москва, ул. Павла Корчагина, д. 14</div>
                     <div class="footer-phone">
-                        <a href="tel:84993906147">8 (499) 390 61 47</a>
+                        <a class="nav-link" href="tel:+74993943841" title="Позвонить нам">8 (499) 394 38 41</a>
                     </div>
-                    <div class="footer-email">info@mvgifts.ru</div>
+                    <div class="footer-email">
+                        <a class="nav-link menu__email" href="mailto:info@mvgifts.ru" title="Написать нам">info@mvgifts.ru</a>
+                    </div>
                     <div class="footer-policy">
                         <a href="/pages/privacy-policy">
                             ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ

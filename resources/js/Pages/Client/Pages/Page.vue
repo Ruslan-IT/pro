@@ -7,24 +7,39 @@
 
 <template>
 
-        <Header :categories="$page.props.categories" />
 
-        <div class="page-content">
+        <div class="wrapper">
+
+            <Header :categories="$page.props.categories" />
 
 
+            <main class="main">
+                <div class="row">
+                    <div class="col-xl-12">
 
-            <div class="container">
+                        <div class="container">
 
-<!--                <h1>{{ page.title }}</h1>-->
+                            <!--                <h1>{{ page.title }}</h1>-->
 
-                 <div v-html="page.content">
+                            <div v-html="page.content">
 
-                 </div>
+                            </div>
 
-            </div>
+                        </div>
 
+
+                    </div>
+
+                </div>
+
+            </main>
 
         </div>
+
+
+
+
+
 
 
 </template>
