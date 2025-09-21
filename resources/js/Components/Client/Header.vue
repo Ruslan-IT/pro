@@ -285,13 +285,13 @@
 
                                     <!-- Дополнительные пункты меню (только для десктопа) -->
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="/preimushestva">Преимущества</a>
+                                        <a class="more_menu nav-link" href="/pages/preimushestva">Преимущества</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="/nagrady">Награды</a>
+                                        <a class="more_menu nav-link" href="/pages/nagrady">Награды</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="/blagodarnost">Благодарности</a>
+                                        <a class="more_menu nav-link" href="/pages/blagodarnost">Благодарности</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
                                         <a class="more_menu nav-link" href="/news">Новости</a>
@@ -300,7 +300,7 @@
                                         <a class="more_menu nav-link" href="/articles">Статьи</a>
                                     </li>
                                     <li class="nav-item nav__block__none">
-                                        <a class="more_menu nav-link" href="/voprosy-i-otvety">Вопросы и ответы</a>
+                                        <a class="more_menu nav-link" href="/pages/voprosy-i-otvety">Вопросы и ответы</a>
                                     </li>
 
                                     <li class="nav-item nav__block__none menu__phone">
