@@ -1,0 +1,1 @@
+import{A as t}from"./AdminLayout-Dhy_EoFV.js";import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import"./app-DDXHtuLg.js";const r={name:"Index",layout:t};function e(n,a,s,c,p,_){return" Продукты "}const i=o(r,[["render",e]]);export{i as default};
