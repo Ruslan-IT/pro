@@ -18,12 +18,12 @@
                 <!-- 2 колонка - Ссылки -->
                 <div class="col-md-4 mb-4 mb-md-0 footer__item">
                     <ul class="footer-links">
-                        <li><a href="/kompanii">О КОМПАНИИ</a></li>
-                        <li><a href="/news">НОВОСТИ</a></li>
+                        <li><a href="/pages/kompanii">О КОМПАНИИ</a></li>
+                        <li><a href="/pages/news">НОВОСТИ</a></li>
                         <li><a href="/articles">СТАТЬИ</a></li>
-                        <li><a href="/oplata">ОПЛАТА</a></li>
-                        <li><a href="/karta-saita">КАРТА САЙТА</a></li>
-                        <li><a href="/contacts">КОНТАКТЫ</a></li>
+                        <li><a href="/pages/oplata">ОПЛАТА</a></li>
+                        <li><a href="/pages/karta-saita">КАРТА САЙТА</a></li>
+                        <li><a href="/pages/contacts">КОНТАКТЫ</a></li>
                     </ul>
                 </div>
 
