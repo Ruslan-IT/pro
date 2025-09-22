@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CallbackController;
 use App\Http\Controllers\Client\SearchController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PortfolioController;
@@ -46,3 +47,5 @@ Route::get('/privacy-policy', function () {
 
 // Страницы
 Route::get('/pages/{slug}', [PageController::class, 'show'])->name('pages.show');
+
+Route::post('/api/callback', [CallbackController::class, 'store']);

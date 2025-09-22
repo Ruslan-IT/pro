@@ -17,7 +17,9 @@
                             </div>
                             <span>|</span>
                             <div class="header__top__block">
-                                <button type="submit" class="btn btn-primary submit-btn btn__red">ЗАКАЗАТЬ ЗВОНОК</button>
+                                <button type="submit" class="btn btn-primary submit-btn btn__red" @click="openCallbackModal">
+                                    ЗАКАЗАТЬ ЗВОНОК
+                                </button>
                             </div>
                             <span>|</span>
                             <div class="header__top__block">
@@ -461,6 +463,58 @@
             </div>
         </div>
 
+        <!-- Попап "Заказать звонок" -->
+        <div v-if="showCallbackModal" class="modal-overlay" @click.self="closeCallbackModal">
+            <div class="modal-content">
+                <button class="modal-close" @click="closeCallbackModal">×</button>
+                <h2 class="form-title">Оставьте контакты <br> и наши менеджеры свяжутся  <br> с Вами </h2>
+
+                <!-- Добавьте эти блоки для отображения сообщений -->
+                <div v-if="callbackSuccessMessage" class="success-message">
+                    {{ callbackSuccessMessage }}
+                </div>
+                <div v-if="callbackErrorMessage" class="error-message">
+                    {{ callbackErrorMessage }}
+                    <button class="error-close" @click="callbackErrorMessage = ''">×</button>
+                </div>
+
+                <form @submit.prevent="submitCallbackForm">
+                    <div class="mb-3 form__manager__block__input">
+                        <input type="text" class="form-control" v-model="callbackForm.name" placeholder="Как вас зовут?" >
+                    </div>
+
+                    <div class="mb-3 form__manager__block__input">
+                        <input type="tel" class="form-control" v-model="callbackForm.phone" placeholder="Номер телефона +7 (999) 999-99-99"  maxlength="18">
+                    </div>
+
+                    <div class="mb-3 form__manager__block__input">
+                        <input type="email" class="form-control" v-model="callbackForm.email" placeholder="E-mail">
+                    </div>
+
+                    <div class="mb-4 form-check form__manager__block__input__check">
+                        <input
+                            type="checkbox"
+                            class="form-check-input"
+                            id="privacyCheckCallback"
+                            name="privacyCheckCallback"
+                            v-model="callbackForm.agreedToPrivacy"
+                            >
+
+                        <label class="form-check-label"  for="privacyCheckCallback">
+                            Соглашаюсь с
+                            <a href="/pages/privacy-policy" target="_blank">Политикой конфиденциальности</a>
+                        </label>
+                    </div>
+
+                    <div class="block__button__center">
+                        <button type="submit" class="btn btn-primary submit-btn btn__red" :disabled="loading">
+                            {{ loading ? 'ОТПРАВКА...' : 'ЗАПРОСИТЬ' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
 
     </header>
 </template>
@@ -796,7 +850,86 @@ const printingTotal = computed(() => {
     }, 0);
 });
 
+/********************************************************/
 
+// Состояние модального окна
+const showCallbackModal = ref(false)
+
+// Данные формы
+const callbackForm = reactive({
+    name: '',
+    phone: '',
+    email: '',
+    agreedToPrivacy: false
+})
+
+// Состояние загрузки
+const loading = ref(false)
+const callbackSuccessMessage = ref('')
+const callbackErrorMessage = ref('')
+
+// Открытие модального окна
+const openCallbackModal = () => {
+    showCallbackModal.value = true
+    // Сброс сообщений при открытии
+    callbackSuccessMessage.value = ''
+    callbackErrorMessage.value = ''
+}
+
+// Закрытие модального окна
+const closeCallbackModal = () => {
+    showCallbackModal.value = false
+    // Очистка формы при закрытии
+    Object.assign(callbackForm, {
+        name: '',
+        phone: '',
+        email: '',
+        agreedToPrivacy: false
+    })
+}
+
+// Отправка формы
+const submitCallbackForm = async () => {
+    // Сброс предыдущих сообщений
+    callbackSuccessMessage.value = ''
+    callbackErrorMessage.value = ''
+
+    // Валидация
+    const errors = []
+    if (!callbackForm.name.trim()) errors.push('Укажите ваше имя')
+    if (!callbackForm.phone.trim()) errors.push('Укажите телефон')
+    if (!callbackForm.email.trim()) errors.push('Укажите email')
+    if (!callbackForm.agreedToPrivacy) errors.push('Необходимо согласие с политикой конфиденциальности')
+
+    if (errors.length > 0) {
+        callbackErrorMessage.value = errors.join(', ')
+        return
+    }
+
+    loading.value = true
+
+    try {
+        const response = await axios.post('/api/callback', callbackForm)
+
+        if (response.data.success) {
+            callbackSuccessMessage.value = 'Ваша заявка принята! Мы свяжемся с вами в ближайшее время.'
+
+            // Очистка формы через 2 секунды
+            setTimeout(() => {
+                closeCallbackModal()
+                callbackSuccessMessage.value = ''
+            }, 2000)
+        } else {
+            callbackErrorMessage.value = response.data.message || 'Произошла ошибка при отправке формы'
+        }
+    } catch (error) {
+        console.error('Ошибка при отправке формы:', error)
+        callbackErrorMessage.value = 'Произошла ошибка при отправке формы. Пожалуйста, попробуйте позже.'
+    } finally {
+        loading.value = false
+    }
+
+}
 
 
 
@@ -1346,6 +1479,82 @@ input[type=checkbox]+label {
 }
 
 
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
 
+.modal-content {
+    background: white!important;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form__manager__block__input {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-check {
+    margin-bottom: 20px;
+}
+
+.block__button__center {
+    text-align: center;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
+}
 
 </style>
