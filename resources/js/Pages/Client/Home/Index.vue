@@ -25,92 +25,61 @@
                 <div class="col-xl-12">
 
                     <div class="container">
+
                         <div id="mainSlider" class="carousel slide custom-slider" data-bs-ride="carousel">
                                     <!-- Слайды -->
-                                    <div class="carousel-inner h-100">
-                                        <div class="carousel-item active h-100">
-                                            <div class="d-flex justify-content-center align-items-center h-100">
-                                                <img src="/img/slider-12.jpg" alt="Слайд 1">
-                                            </div>
+                            <div class="carousel-inner h-100">
+                                <div v-for="(slide, index) in slides"
+                                     :key="slide.id"
+                                     :class="['carousel-item', 'h-100', { active: index === 0 }]">
+                                    <div class="d-flex justify-content-center align-items-center h-100">
+                                        <img :src="`/storage/${slide.image}`" :alt="slide.title">
+                                        <div class="carousel-caption" v-if="slide.title || slide.subtitle">
+                                            <h3 v-if="slide.title">{{ slide.title }}</h3>
+                                            <p v-if="slide.subtitle">{{ slide.subtitle }}</p>
+                                            <a v-if="slide.link" :href="slide.link" class="btn btn-primary btn__red">
+                                                Подробнее
+                                            </a>
                                         </div>
-                                        <div class="carousel-item h-100">
-                                            <div class="d-flex justify-content-center align-items-center h-100">
-                                                <img src="/img/slider-12.jpg" alt="Слайд 2">
-                                            </div>
-                                        </div>
-                                        <div class="carousel-item h-100">
-                                            <div class="d-flex justify-content-center align-items-center h-100">
-                                                <img src="/img/slider-12.jpg" alt="Слайд 3">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Кастомные индикаторы (3 полоски) -->
-                            <div class="carousel-indicators slider-indicators">
-                                <button
-                                    type="button"
-                                    data-bs-target="#mainSlider"
-                                    data-bs-slide-to="0"
-                                    class="slider-indicator active"
-                                    aria-current="true"
-                                    aria-label="Slide 1"
-                                ></button>
-                                <button
-                                    type="button"
-                                    data-bs-target="#mainSlider"
-                                    data-bs-slide-to="1"
-                                    class="slider-indicator"
-                                    aria-label="Slide 2"
-                                ></button>
-                                <button
-                                    type="button"
-                                    data-bs-target="#mainSlider"
-                                    data-bs-slide-to="2"
-                                    class="slider-indicator"
-                                    aria-label="Slide 3"
-                                ></button>
-                            </div>
-                                    <!-- Кастомные стрелки -->
-                                    <div class="slider-control slider-control-prev" data-bs-target="#mainSlider" data-bs-slide="prev">
-                                        <span class="slider-control-icon">‹</span>
-                                    </div>
-                                    <div class="slider-control slider-control-next" data-bs-target="#mainSlider" data-bs-slide="next">
-                                        <span class="slider-control-icon">›</span>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Индикаторы -->
+                            <div class="carousel-indicators slider-indicators" v-if="slides.length > 1">
+                                <button v-for="(slide, index) in slides"
+                                        :key="slide.id"
+                                        type="button"
+                                        data-bs-target="#mainSlider"
+                                        :data-bs-slide-to="index"
+                                        :class="['slider-indicator', { active: index === 0 }]"
+                                        :aria-label="`Slide ${index + 1}`">
+                                </button>
+                            </div>
+                            <!-- Стрелки -->
+                            <div class="slider-control slider-control-prev" data-bs-target="#mainSlider" data-bs-slide="prev" v-if="slides.length > 1">
+                                <span class="slider-control-icon">‹</span>
+                            </div>
+                            <div class="slider-control slider-control-next" data-bs-target="#mainSlider" data-bs-slide="next" v-if="slides.length > 1">
+                                <span class="slider-control-icon">›</span>
+                            </div>
+
                     </div>
 
                 </div>
             </div>
-            <div class="container">
+            </div>
+            <!-- Промо блоки -->
+            <div class="container" v-if="promoBlocks && promoBlocks.length > 0">
                 <div class="row transport">
-                    <div class="col-xl-4 tranImg">
-                        <img src="img/transport.jpg" alt="">
+                    <div v-for="block in promoBlocks" :key="block.id" class="col-xl-4 tranImg">
+                        <img :src="`/storage/${block.image}`" :alt="block.title">
                         <div class="header__top__block">
-                            <button type="submit" class="btn btn-primary submit-btn btn__red ">
-                                СМОТРЕТЬ
-                            </button>
+                            <a :href="block.link" class="btn btn-primary submit-btn btn__red">
+                                {{ block.button_text || 'СМОТРЕТЬ' }}
+                            </a>
                         </div>
                     </div>
-
-                    <div class="col-xl-4 transport__fl tranImg">
-                        <img src="img/transport.jpg" alt="">
-                        <div class="header__top__block">
-                            <button type="submit" class="btn btn-primary submit-btn btn__red ">
-                                СМОТРЕТЬ
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4 tranImg">
-                        <img src="img/transport.jpg" alt="">
-                        <div class="header__top__block">
-                            <button type="submit" class="btn btn-primary submit-btn btn__red ">
-                                СМОТРЕТЬ
-                            </button>
-                        </div>
-                    </div>
-
                 </div>
             </div>
 
@@ -129,7 +98,10 @@
                                          class="work-img" :alt="work.title">
                                 </div>
                                 <h3 class="work-title">
-                                    {{ work.title }}
+                                    <Link :href="`/portfolio/${work.slug}`" class="read-more">
+                                        {{ work.title }}
+                                    </Link>
+
                                 </h3>
                                 <p class="work-description">
                                     {{ truncateText(work.content, 150) }}
@@ -145,40 +117,40 @@
 
 
             <!-- Секция "Новости" -->
-<!--            <section class="about-section">
-                <h2 class="text-center mb-5">О компании</h2>
+            <!-- Секция "О компании" -->
+            <section class="about-section" v-if="aboutBlocks && aboutBlocks.length > 0 && mainBlock.title">
+                <h2 class="text-center mb-5">
+                    {{ mainBlock.title }}
+                </h2>
+
                 <div class="container">
-                    <div class="row">
+                    <!-- Описание главного блока -->
+                    <div class="row" v-if="mainBlock.description">
                         <div class="col-12">
                             <p class="about-description">
-                                Наша компания уже более 10 лет занимается производством качественной печатной продукции.
-                                Мы используем современные технологии и материалы, чтобы обеспечить нашим клиентам
-                                лучший сервис и долговечность изделий.
+                                {{ mainBlock.description }}
                             </p>
                         </div>
                     </div>
 
-                    <div class="about__blocks" >
-
-                        &lt;!&ndash; Фото 1 &ndash;&gt;
-                        <div class="col__flex" v-for="(newsItem, index) in news" :key="index">
+                    <!-- Остальные блоки -->
+                    <div class="about__blocks row" v-if="otherBlocks.length > 0">
+                        <div class="col-md-4 col-sm-6 col-12 mb-4" v-for="(block, index) in otherBlocks" :key="block.id">
                             <div class="photo-card">
                                 <div class="photo-container">
-                                    <img  class="news-img"
-                                          :src="`storage/${newsItem.image}`" :alt="newsItem.title">
+                                    <img :src="`/storage/${block.image}`" :alt="block.title" class="news-img">
                                     <div class="photo-border"></div>
                                 </div>
-                                <h3 class="photo-title">{{ newsItem.title }}</h3>
-                                <p class="photo-description">
-                                    {{ newsItem.excerpt }}
-                                </p>
+                                <h3 class="photo-title">{{ block.title }}</h3>
+                                <p class="photo-description">{{ block.description }}</p>
+<!--                                <a v-if="block.link" :href="block.link" class="btn btn-primary btn__red">
+                                    {{ block.button_text || 'ПОДРОБНЕЕ' }}
+                                </a>-->
                             </div>
                         </div>
-
-
                     </div>
                 </div>
-            </section>-->
+            </section>
 
         </main>
 
@@ -187,19 +159,37 @@
 </template>
 
 <script setup>
-import { Head } from '@inertiajs/vue3'
-import { defineProps, onMounted, onUnmounted } from 'vue';
+import {Head, Link} from '@inertiajs/vue3'
+import { defineProps, computed, onMounted, onUnmounted } from 'vue';
 import Header from '@/Components/Client/Header.vue'
 import Footer from '@/Components/Footer.vue'
 
-defineProps({
+const props = defineProps({
     categories: Array,
     portfolio: Array,
     news: Array,
+    slides: Array,
+    promoBlocks: Array,
+    aboutBlocks: {
+        type: Array,
+        default: () => [] // Добавляем значение по умолчанию
+    }
+})
+
+// Вычисляемые свойства для блоков о компании
+const mainBlock = computed(() => {
+    return props.aboutBlocks.find(block => block.is_main) || {}
+})
+
+const otherBlocks = computed(() => {
+    return props.aboutBlocks
+        .filter(block => !block.is_main)
+        .sort((a, b) => a.order - b.order)
 })
 
 // Функция для форматирования даты
 const formatDate = (dateString) => {
+    if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('ru-RU', {
         day: '2-digit',
@@ -344,6 +334,10 @@ onUnmounted(() => {
 
 .about__blocks {
     flex-wrap: wrap;
+}
+.about-description {
+    margin: 0 auto 50px!important;
+
 }
 
 /* Адаптивность */

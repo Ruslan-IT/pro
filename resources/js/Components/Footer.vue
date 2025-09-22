@@ -31,14 +31,20 @@
                 <div class="col-md-4 footer__item">
                     <div class="footer-address">г. Москва, ул. Павла Корчагина, д. 14</div>
                     <div class="footer-phone">
-                        <a class="nav-link" href="tel:+74993943841" title="Позвонить нам">8 (499) 394 38 41</a>
+                        <a class="" href="tel:+74993943841" title="Позвонить нам">8 (499) 394 38 41</a>
                     </div>
                     <div class="footer-email">
-                        <a class="nav-link menu__email" href="mailto:info@mvgifts.ru" title="Написать нам">info@mvgifts.ru</a>
+                        <a class="" href="mailto:info@mvgifts.ru" title="Написать нам">info@mvgifts.ru</a>
                     </div>
                     <div class="footer-policy">
                         <a href="/pages/privacy-policy">
-                            ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ
+                            ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ
+
+                        </a>
+                        <br>
+                        <a href="/pages/soglasie-na-obrabotku-personalnyx-dannyx">
+
+                            СОГЛАСИЕ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ
                         </a>
 
                     </div>
@@ -83,5 +89,20 @@ footer {
 .img__top:hover {
     transform: translateY(-5px);
 }
+.footer-links {
+    text-align: left!important;
+}
+
+.footer__item {
+    text-align: left;
+}
+
+.footer-email a{
+    color:#fff;
+}
+.footer-policy a{
+    color:#fff;
+}
+
 
 </style>

@@ -35,7 +35,9 @@
                                 <div class="portfolio-meta">
                                     <span class="portfolio-date">{{ formatDate(item.created_at) }} </span>
                                 </div>
-                                <Link :href="`/portfolio/${item.slug}`" class="read-more">Подробнее</Link>
+                                <Link :href="`/portfolio/${item.slug}`" class="read-more">
+                                    Подробнее
+                                </Link>
                             </div>
                         </div>
                     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\AboutCompanyBlockResource;
 use App\Filament\Resources\ArticleResource;
 use App\Filament\Resources\DrawingResource;
 use App\Filament\Resources\NewsResource;
@@ -79,6 +80,11 @@ class AdminPanelProvider extends PanelProvider
                         ->url(fn (): string => DrawingResource::getUrl('index'))
                         ->group('Контент')
                 ])
+
+
+
+
+
 
             ->colors([
                 'primary' => Color::Rose
