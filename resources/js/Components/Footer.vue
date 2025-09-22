@@ -9,7 +9,7 @@
                 <!-- 1 колонка - Лого и копирайт -->
                 <div class="col-md-4 mb-4 mb-md-0 footer__item">
                     <div class="footer-logo">
-                        <img src="/img/logo_ffter.png" alt="MVGIFTS" class="img-fluid">
+                        <img src="https://mvgifts.ru/img/logo_ffter.png" alt="MVGIFTS" class="img-fluid">
                     </div>
                     <div class="footer-copyright">mvgifts.ru 2018-2025</div>
                     <div class="footer-rights">Все права защищены</div>
