@@ -19,10 +19,9 @@ class CallbackController extends Controller
 
         try {
             // Отправка email администратору
-            Mail::to('admin@mvgifts.ru')->send(new CallbackRequest($validated));
+            Mail::to('admin@ru-landing.ru')->send(new CallbackRequest($validated));
 
-            // Отправка email владельцу (если нужен другой адрес)
-            Mail::to('owner@mvgifts.ru')->send(new CallbackRequest($validated));
+
 
             // Отправка копии на email пользователя, если он указан
             if (!empty($validated['email'])) {
