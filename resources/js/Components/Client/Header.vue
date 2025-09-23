@@ -25,7 +25,7 @@
                             <div class="header__top__block">
                                 <div class="header__top__cart" @click="cartStore.toggleCart()">
                                     <div class="header__top__img">
-                                        <img src="/img/cart.png" alt="">
+                                        <img :src="`/images/cart.png`" alt="корзина">
                                         <span id="cart_qty" v-if="cartStore.totalItems > 0">{{ cartStore.totalItems }}</span>
                                     </div>
                                     <div class="header__top__info">
@@ -44,7 +44,7 @@
         <div class="container">
             <div class="row header__search">
                 <div class="col-xl-2">
-                    <img src="images/logo.png" alt="logo">
+                    <img :src="`/images/logo.png`" alt="Лого">
                 </div>
                 <div class="col-xl-8">
                     <!-- Бургер -->
