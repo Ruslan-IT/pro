@@ -61,7 +61,7 @@ class CartController extends Controller
         Mail::to($cart['email'])->send(new OrderCreatedMail($cart));
 
         // Отправка email администратору
-        Mail::to('info@mvgifts.ru')->send(new OrderCreatedMail($cart));
+        //Mail::to('info@mvgifts.ru')->send(new OrderCreatedMail($cart));
 
         Mail::to('admin@ru-landing.ru')->send(new OrderCreatedMail($cart));
 
