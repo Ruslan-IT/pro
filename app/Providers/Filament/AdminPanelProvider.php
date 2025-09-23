@@ -57,11 +57,11 @@ class AdminPanelProvider extends PanelProvider
 
 
 
-               /* ->navigationItems([
+               ->navigationItems([
                     NavigationItem::make('Статьи')
                         ->url(fn (): string => ArticleResource::getUrl('index'))
                         ->group('Контент')
-                ])*/
+                ])
 
                 ->navigationItems([
                     NavigationItem::make('Новости')
