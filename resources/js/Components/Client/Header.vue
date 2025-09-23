@@ -44,7 +44,7 @@
         <div class="container">
             <div class="row header__search">
                 <div class="col-xl-2">
-                    <img src="https://web-ruslan.ru/img/logo.png" alt="logo">
+                    <img src="images/logo.png" alt="logo">
                 </div>
                 <div class="col-xl-8">
                     <!-- Бургер -->
