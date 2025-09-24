@@ -2022,11 +2022,11 @@ input[type=checkbox]+label:before {
     width: 16px;
     height: 15px;
     content: '';
-    background: url(../img/no_checked.png) no-repeat
+    background: url(../images/no_checked.png) no-repeat
 }
 
 input[type=checkbox]:checked+label:before {
-    background: url(../img/checked.png) no-repeat
+    background: url(../images/checked.png) no-repeat
 }
 
 .hidden {
