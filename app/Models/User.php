@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\GlobalOriginalParamChange\GlobalOriginalParamChangeEnumFilter;
+
 use App\Enums\Role\RoleEnum;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser
@@ -52,6 +54,7 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed', // Важно! Это автоматически хеширует пароль
     ];
 
     public function roles(): BelongsToMany
@@ -63,5 +66,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->roles->contains('title', RoleEnum::ADMIN->value);
     }
+
+
 
 }
